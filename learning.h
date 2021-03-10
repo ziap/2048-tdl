@@ -1,7 +1,9 @@
 #ifndef LEARNING_H
 #define LEARNING_H
 
+#include <fstream>
 #include <numeric>
+#include <string>
 
 template<class...Features>
 class Learning {
@@ -20,6 +22,16 @@ private:
 		// Update a given board and return it's updated value
 		static float Update(board_t b, float u) {
 			return T::Update(b, u);
+		}
+
+		// Save the model to a binary file
+		static void Save(std::ostream& out) {
+			T::Save(out);
+		}
+
+		// Load the model from a binary file
+		static void Load(std::istream& in, std::string path) {
+			T::Load(in, path);
 		}
 
 		// Printing the stat of the network
@@ -50,6 +62,14 @@ private:
 		static float Update(board_t b, float u) {
 			return TupleNetwork<T>::Update(b, u) + TupleNetwork<Targs...>::Update(b, u);
 		}
+		static void Save(std::ostream& out) {
+			TupleNetwork<T>::Save(out);
+			TupleNetwork<Targs...>::Save(out);
+		}
+		static void Load(std::istream& in, std::string path) {
+			TupleNetwork<T>::Load(in, path);
+			TupleNetwork<Targs...>::Load(in, path);
+		}
 	};
 
 	float alpha = 0.1f;
@@ -59,13 +79,23 @@ private:
 	}
 
 	float Update(board_t b, float u) {
-		u /= sizeof...(Features);
+		u /= float(sizeof...(Features));
 		return TupleNetwork<Features...>::Update(b, u);
 	}
 
 	std::vector<int> scores;
 	std::vector<int> max_tile;
 public:
+
+	void Save(std::string file_name) {
+		std::ofstream fout(file_name.c_str(), std::ios::out | std::ios::binary);
+		TupleNetwork<Features...>::Save(fout);
+	}
+
+	void Load(std::string file_name) {
+		std::ifstream fin(file_name.c_str(), std::ios::out | std::ios::binary);
+		if (fin.is_open()) TupleNetwork<Features...>::Load(fin, file_name);
+	}
 
 	std::vector<State> path;
 
@@ -76,14 +106,12 @@ public:
 	}
 
 	State SelectBestMove(board_t b) {
-		State best(0, 0);
-		best.action = -1;
-		best.value = -(1 << 22);
+		State best(b, -1);
 		for (int i = 0; i < 4; i++) {
 			State after(b, i);
 			if (after.isValid()) {
 				after.value = after.reward + Estimate(after.after);
-				if (after.value > best.value) best = after;
+				if (!best.isValid() || after.value > best.value) best = after;
 			}
 		}
 		return best;
@@ -91,7 +119,7 @@ public:
 
 	void UpdateEpisode() {
 		float exact = 0;
-		for (path.pop_back(); path.size(); path.pop_back()) {
+		for (path.pop_back();path.size(); path.pop_back()) {
 			State move = path.back();
 			float error = exact - (move.value - move.reward);
 			exact = move.reward + Update(move.after, alpha * error);

@@ -5,11 +5,17 @@
 #include <iostream>
 
 int main() {
+	long long seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+	srand(seed);
 	std::cout << "A big tuple network consists of 2 axe-shaped 6-tuples and 2 rectangular 6-tuples\n";
 	Learning<Feature<0, 1, 2, 3, 4, 5>,
 			 Feature<4, 5, 6, 7, 8, 9>,
 			 Feature<0, 1, 2, 4, 5, 6>,
-			 Feature<4, 5, 6, 8, 9, 10>> tdl(0.025f);
+			 Feature<4, 5, 6, 8, 9, 10>> tdl(0.1f);
+	tdl.Load("weights.bin");
+	std::cout << "seed = " << seed << '\n';
+	auto start = std::chrono::high_resolution_clock::now();
+	int moves = 0;
 	for (int n = 1; n <= 5000000; n++) {
 		board_t board = AddTile(AddTile(0));
 		int score = 0;
@@ -19,10 +25,17 @@ int main() {
 			if (best.isValid()) {
 				score += best.reward;
 				board = AddTile(best.after);
+				moves++;
 			}
 			else break;
 		}
 		tdl.UpdateEpisode();
 		tdl.MakeStat(n, board, score);
 	}
+	auto end = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+	auto duration_h = std::chrono::duration_cast<std::chrono::hours>(end - start);
+	std::cout << "training done after " << duration_h.count() << " hours\n";
+	std::cout << "speed = " << (float)moves * 1e9 / (float)duration.count() << " moves per second\n";
+	tdl.Save("weights.bin");
 }

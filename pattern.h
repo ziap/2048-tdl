@@ -55,7 +55,7 @@ public:
 
     // Update a given board and return it's updated value
     static float Update(board_t b, float u) {
-        u /= 8;
+        u /= 8.0f;
         float value = 0;
         for (int i = 0; i < 8; i++) {
             board_t index = 0;
@@ -64,6 +64,17 @@ public:
             value += weights[index];
         }
         return value;
+    }
+
+    // Save the feature to a binary stream
+    static void Save(std::ostream& out) {
+        for (int i = 0; i < (1 << (4 * len)); i++) out.write((char*)&weights[i], sizeof(float));
+    }
+
+    // Load the feature from a binary stream
+    static void Load(std::istream& in, std::string path) {
+        for (int i = 0; i < (1 << (4 * len)); i++) in.read((char*)&weights[i], sizeof(float));
+        std::cout << "Tuple " << name << " loaded from " << path << '\n';
     }
 };
 
