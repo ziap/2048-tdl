@@ -21,6 +21,13 @@ public:
 		}
 	}
 	bool isValid() { return before != after; }
+	void operator=(State s) {
+		action = s.action;
+		before = s.before;
+		after = s.after;
+		value = s.value;
+		reward = s.reward;
+	}
 };
 
 #endif // STATE_H

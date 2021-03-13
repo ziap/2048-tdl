@@ -1,6 +1,8 @@
 #ifndef LEARNING_H
 #define LEARNING_H
 
+#include "pattern.h"
+#include "state.h"
 #include <fstream>
 #include <numeric>
 #include <string>
@@ -33,29 +35,9 @@ private:
 		static void Load(std::istream& in, std::string path) {
 			T::Load(in, path);
 		}
-
-		// Printing the stat of the network
-		static void Print() {
-			std::cout << T::name << " size = " << T::len;
-			size_t usage = sizeof(T::weights);
-			if (usage >= (1 << 30)) {
-				std::cout << " (" << (usage >> 30) << "GB)";
-			}
-			else if (usage >= (1 << 20)) {
-				std::cout << " (" << (usage >> 20) << "MB)";
-			}
-			else if (usage >= (1 << 10)) {
-				std::cout << " (" << (usage >> 10) << "KB)";
-			}
-			std::cout << '\n';
-		};
 	};
 	template<class T, class...Targs>
 	struct TupleNetwork<T, Targs...> {
-		static void Print() {
-			TupleNetwork<T>::Print();
-			TupleNetwork<Targs...>::Print();
-		}
 		static float Estimate(board_t b) {
 			return TupleNetwork<T>::Estimate(b) + TupleNetwork<Targs...>::Estimate(b);
 		}
@@ -74,9 +56,7 @@ private:
 
 	float alpha = 0.1f;
 
-	float Estimate(board_t b) {
-		return TupleNetwork<Features...>::Estimate(b);
-	}
+	float lambda = 0.0f;
 
 	float Update(board_t b, float u) {
 		u /= float(sizeof...(Features));
@@ -86,6 +66,10 @@ private:
 	std::vector<int> scores;
 	std::vector<int> max_tile;
 public:
+
+	float Estimate(board_t b) {
+		return TupleNetwork<Features...>::Estimate(b);
+	}
 
 	void Save(std::string file_name) {
 		std::ofstream fout(file_name.c_str(), std::ios::out | std::ios::binary);
@@ -99,10 +83,9 @@ public:
 
 	std::vector<State> path;
 
-	Learning(float a = 0.1f) {
-		TupleNetwork<Features...>::Print();
+	Learning(float a = 0.1f, float l = 0.0f) {
 		alpha = a;
-		std::cout << "alpha = " << alpha << '\n';
+		lambda = l;
 	}
 
 	State SelectBestMove(board_t b) {
@@ -122,6 +105,13 @@ public:
 		for (path.pop_back();path.size(); path.pop_back()) {
 			State move = path.back();
 			float error = exact - (move.value - move.reward);
+			if (lambda) { // Skip this if lambda = 0
+				float curr_lambda = lambda;
+				for (std::vector<State>::reverse_iterator i = path.rbegin() + 1; i != path.rend() && i != path.rbegin() + 5; i++) {
+					Update(i->after, alpha * curr_lambda * error);
+					curr_lambda *= lambda;
+				}
+			}
 			exact = move.reward + Update(move.after, alpha * error);
 		}
 	}

@@ -7,11 +7,10 @@
 int main() {
 	long long seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	srand(seed);
-	std::cout << "A big tuple network consists of 2 axe-shaped 6-tuples and 2 rectangular 6-tuples\n";
 	Learning<Feature<0, 1, 2, 3, 4, 5>,
 			 Feature<4, 5, 6, 7, 8, 9>,
 			 Feature<0, 1, 2, 4, 5, 6>,
-			 Feature<4, 5, 6, 8, 9, 10>> tdl(0.1f);
+			 Feature<4, 5, 6, 8, 9, 10>> tdl(0.05f, 0.5f);
 	tdl.Load("weights.bin");
 	std::cout << "seed = " << seed << '\n';
 	auto start = std::chrono::high_resolution_clock::now();
