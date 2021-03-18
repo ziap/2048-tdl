@@ -1,7 +1,9 @@
 #ifndef PATTERN_H
 #define PATTERN_H
+#include <string>
 #include <vector>
 #include <array>
+#include <fstream>
 
 template<int...pattern>
 class Feature {

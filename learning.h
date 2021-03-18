@@ -3,9 +3,7 @@
 
 #include "pattern.h"
 #include "state.h"
-#include <fstream>
 #include <numeric>
-#include <string>
 
 template<class...Features>
 class Learning {
@@ -100,7 +98,7 @@ public:
 		return best;
 	}
 
-	void UpdateEpisode() {
+	void BackwardLearning() {
 		float exact = 0;
 		for (path.pop_back();path.size(); path.pop_back()) {
 			State move = path.back();

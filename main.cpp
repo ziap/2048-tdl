@@ -1,11 +1,10 @@
 #include "board.h"
-#include "state.h"
-#include "pattern.h"
 #include "learning.h"
+#include "seed.h"
 #include <iostream>
 
 int main() {
-	long long seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+	long long seed = RandomSeed();
 	srand(seed);
 	Learning<Feature<0, 1, 2, 3, 4, 5>,
 			 Feature<4, 5, 6, 7, 8, 9>,
@@ -15,7 +14,7 @@ int main() {
 	std::cout << "seed = " << seed << '\n';
 	auto start = std::chrono::high_resolution_clock::now();
 	int moves = 0;
-	for (int n = 1; n <= 5000000; n++) {
+	for (int n = 1; n <= 100000; n++) {
 		board_t board = AddTile(AddTile(0));
 		int score = 0;
 		for (;;) {
@@ -28,7 +27,7 @@ int main() {
 			}
 			else break;
 		}
-		tdl.UpdateEpisode();
+		tdl.BackwardLearning();
 		tdl.MakeStat(n, board, score);
 	}
 	auto end = std::chrono::high_resolution_clock::now();
