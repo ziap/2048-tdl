@@ -17,8 +17,14 @@ private:
         return name;
     };
 
+    static constexpr int len = sizeof...(pattern);
+    static float weights[1 << (4 * len)];
+    static float errors[1 << (4 * len)];
+    static float abs_errors[1 << (4 * len)];
+    static const std::string name;
+
     // Build the pattern's 8 isomorphisms
-    static std::array<std::vector<int>, 8> BuildIsomorphic() {
+    static std::array<std::array<int, len>, 8> BuildIsomorphic() {
         board_t isomorphic_boards[8] = {
             0x0123456789abcdef,
             0xc840d951ea62fb73,
@@ -29,20 +35,20 @@ private:
             0xcdef89ab45670123,
             0xfb73ea62d951c840
         };
-        std::array<std::vector<int>, 8> isomorphic;
+        std::array<std::array<int, len>, 8> isomorphic;
         for (int i = 0; i < 8; i++) {
             board_t idx = isomorphic_boards[i];
+            int j = 0;
             for (int x : std::vector<int>{ {pattern...} }) {
-                isomorphic[i].push_back(Tile(idx, x));
+                isomorphic[i][j++] = Tile(idx, x);
             }
         }
         return isomorphic;
     }
+
+    static std::array<std::array<int, len>, 8> isomorphic;
+
 public:
-    static constexpr int len = sizeof...(pattern);
-    static float weights[1 << (4 * len)];
-    static const std::string name;
-    static std::array<std::vector<int>, 8> isomorphic;
 
     // Estimate the value of a board
     static float Estimate(board_t b) {
@@ -69,8 +75,9 @@ public:
     }
 
     // Save the feature to a binary stream
-    static void Save(std::ostream& out) {
+    static void Save(std::ostream& out, std::string path) {
         for (int i = 0; i < (1 << (4 * len)); i++) out.write((char*)&weights[i], sizeof(float));
+        std::cout << "Tuple " << name << " saved to " << path << '\n';
     }
 
     // Load the feature from a binary stream
@@ -82,6 +89,6 @@ public:
 
 template<int...pattern> float Feature<pattern...>::weights[1 << (4 * len)] = {0};
 template<int...pattern> const std::string Feature<pattern...>::name = GetName();
-template<int...pattern> std::array<std::vector<int>, 8> Feature<pattern...>::isomorphic = BuildIsomorphic();
+template<int...pattern> std::array<std::array<int, Feature<pattern...>::len>, 8> Feature<pattern...>::isomorphic = BuildIsomorphic();
 
 #endif // PATTERN_H

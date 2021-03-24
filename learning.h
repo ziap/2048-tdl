@@ -4,6 +4,7 @@
 #include "pattern.h"
 #include "state.h"
 #include <numeric>
+#include <unordered_map>
 
 template<class...Features>
 class Learning {
@@ -25,8 +26,8 @@ private:
 		}
 
 		// Save the model to a binary file
-		static void Save(std::ostream& out) {
-			T::Save(out);
+		static void Save(std::ostream& out, std::string path) {
+			T::Save(out, path);
 		}
 
 		// Load the model from a binary file
@@ -42,9 +43,9 @@ private:
 		static float Update(board_t b, float u) {
 			return TupleNetwork<T>::Update(b, u) + TupleNetwork<Targs...>::Update(b, u);
 		}
-		static void Save(std::ostream& out) {
-			TupleNetwork<T>::Save(out);
-			TupleNetwork<Targs...>::Save(out);
+		static void Save(std::ostream& out, std::string path) {
+			TupleNetwork<T>::Save(out, path);
+			TupleNetwork<Targs...>::Save(out, path);
 		}
 		static void Load(std::istream& in, std::string path) {
 			TupleNetwork<T>::Load(in, path);
@@ -56,11 +57,6 @@ private:
 
 	float lambda = 0.0f;
 
-	float Update(board_t b, float u) {
-		u /= float(sizeof...(Features));
-		return TupleNetwork<Features...>::Update(b, u);
-	}
-
 	std::vector<int> scores;
 	std::vector<int> max_tile;
 public:
@@ -69,9 +65,14 @@ public:
 		return TupleNetwork<Features...>::Estimate(b);
 	}
 
+	float Update(board_t b, float u) {
+		u /= float(sizeof...(Features));
+		return TupleNetwork<Features...>::Update(b, u);
+	}
+
 	void Save(std::string file_name) {
 		std::ofstream fout(file_name.c_str(), std::ios::out | std::ios::binary);
-		TupleNetwork<Features...>::Save(fout);
+		TupleNetwork<Features...>::Save(fout, file_name);
 	}
 
 	void Load(std::string file_name) {
@@ -99,22 +100,22 @@ public:
 	}
 
 	void BackwardLearning() {
+		std::unordered_map<board_t, float> delta;
 		float exact = 0;
 		for (path.pop_back();path.size(); path.pop_back()) {
 			State move = path.back();
 			float error = exact - (move.value - move.reward);
-			if (lambda) { // Skip this if lambda = 0
-				float curr_lambda = lambda;
-				for (std::vector<State>::reverse_iterator i = path.rbegin() + 1; i != path.rend() && i != path.rbegin() + 5; i++) {
-					Update(i->after, alpha * curr_lambda * error);
-					curr_lambda *= lambda;
-				}
+			float curr_lambda = 1;
+			for (std::vector<State>::reverse_iterator i = path.rbegin(); i != path.rend() && i != path.rbegin() + 5; i++) {
+				delta[i->after] += curr_lambda * error; // Delayed update
+				curr_lambda *= lambda;
 			}
-			exact = move.reward + Update(move.after, alpha * error);
+			exact = move.reward + Update(move.after, alpha * delta[move.after]);
+			delta.erase(delta.find(move.after));
 		}
 	}
 
-	void MakeStat(int n, board_t b, int score) {
+	void MakeStat(int n, board_t b, int score, double progress) {
 		scores.push_back(score);
 		max_tile.push_back(MaxRank(b));
 		if (n % 1000 == 0) {
@@ -129,6 +130,7 @@ public:
 			float mean = float(sum) / 1000;
 			std::cout << n << "\tmean = " << mean;
 			std::cout << "\tmax = " << max;
+			std::cout << "\tprogress: " << progress * 100 << '%';
 			std::cout << '\n';
 			float accu = 0.0f;
 			for (int i = 0xf; i > 0; i--) {

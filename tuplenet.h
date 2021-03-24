@@ -6,18 +6,13 @@
 template<class...Features>
 class Tuples {
 private:
-    template <class...Targs> struct TupleNetwork;
+    template<class...Targs> struct TupleNetwork;
 	template<class T>
 	struct TupleNetwork<T> {
 
 		// Estimate the value of a board
 		static float Estimate(board_t b) {
 			return T::Estimate(b);
-		}
-
-		// Save the model to a binary file
-		static void Save(std::ostream& out) {
-			T::Save(out);
 		}
 
 		// Load the model from a binary file
@@ -30,10 +25,6 @@ private:
 		static float Estimate(board_t b) {
 			return TupleNetwork<T>::Estimate(b) + TupleNetwork<Targs...>::Estimate(b);
 		}
-		static void Save(std::ostream& out) {
-			TupleNetwork<T>::Save(out);
-			TupleNetwork<Targs...>::Save(out);
-		}
 		static void Load(std::istream& in, std::string path) {
 			TupleNetwork<T>::Load(in, path);
 			TupleNetwork<Targs...>::Load(in, path);
@@ -42,11 +33,6 @@ private:
 public:
     static float Estimate(board_t b) {
 		return TupleNetwork<Features...>::Estimate(b);
-	}
-
-    static void Save(std::string file_name) {
-		std::ofstream fout(file_name.c_str(), std::ios::out | std::ios::binary);
-		TupleNetwork<Features...>::Save(fout);
 	}
 
 	static void Load(std::string file_name) {

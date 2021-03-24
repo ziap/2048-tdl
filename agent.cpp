@@ -7,7 +7,7 @@
 std::vector<double> speeds;
 std::vector<unsigned> scores;
 int rate[16] = { 0 };
-int games = 10000;
+int games = 1000;
 
 int main() {
 	Search search;
@@ -40,6 +40,7 @@ int main() {
         speeds.push_back((double)moves * 1e9 / (double)std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count());
 		scores.push_back(score);
 		rate[MaxRank(board)]++;
+		//tdl.UpdateEpisode();
 	}
 	std::cout << '\n';
 	std::cout << "average score: " << std::accumulate(scores.begin(), scores.end(), 0) / games << '\n';
