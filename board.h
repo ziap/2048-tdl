@@ -60,6 +60,16 @@ int MaxRank(board_t b) {
     return max;
 }
 
+// Sum all tiles
+board_t Sum(board_t b) {
+    int result = 0;
+    while (b) {
+        if ((b & 0xf) >= 11) result += 1 << int(b & 0xf);
+        b >>= 4;
+    }
+    return result;
+}
+
 // Count distinct tiles
 int CountDistinct(board_t b) {
     unsigned short mask = 0;

@@ -110,14 +110,13 @@ private:
             return a;
         }
     };
-
 public:
-
-    // Size of the model
-    static constexpr unsigned length = sizeof...(Features);
 
     // The weights of the model
     float weights[Tuples<Features...>::number_of_weights];
+
+    // Size of the model
+    static constexpr unsigned length = sizeof...(Features);
 
     // Estimate the value of a board
     float Estimate(board_t b) { return Tuples<Features...>::Estimate(b, weights); }

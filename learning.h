@@ -2,6 +2,8 @@
 #define LEARNING_H
 
 #include <numeric>
+#include <queue>
+#include <utility>
 #include <unordered_map>
 #include "tuplenet.h"
 
@@ -46,15 +48,20 @@ private:
     T errors, abs_errors;
 
 public:
+    unsigned stage = 0;
+
+    std::queue<std::pair<board_t, int>> starts;
+
     T network;
 
     std::vector<State> path;
 
     float rate = 0.1f;
-    Learning(float a = 1.0f, float l = 0.0f, int u = 1000) {
+    Learning(unsigned i = 0, float a = 1.0f, float l = 0.0f, int u = 1000) {
         rate = a / (8 * network.length);
         lambda = l;
         interval = u;
+        stage = i;
     }
 
     State SelectBestMove(board_t b) {
@@ -74,7 +81,7 @@ public:
         std::vector<board_t> active_weights = network.GetIndex(b);
         for (board_t weight : active_weights) {
             float alpha = ((abs_errors.weights[weight] == 0.0f) ? 1.0f : (abs(errors.weights[weight]) / abs_errors.weights[weight]));
-            network.weights[weight] += rate * alpha * u / (8 * network.length);
+            network.weights[weight] += alpha * u / (8 * network.length);
             value += network.weights[weight];
             errors.weights[weight] += u;
             abs_errors.weights[weight] += abs(u);
@@ -83,22 +90,15 @@ public:
     }
 
     void BackwardLearning() {
-        std::unordered_map<board_t, float> delta;
-        float exact = 0;
+        float exact = 0, error = 0;
         for (path.pop_back();path.size(); path.pop_back()) {
             State move = path.back();
-            float error = exact - (move.value - move.reward);
-            float curr_lambda = 1;
-            for (std::vector<State>::reverse_iterator i = path.rbegin(); i != path.rend() && i != path.rbegin() + 5; i++) {
-                delta[i->after] += curr_lambda * error; // Delayed update
-                curr_lambda *= lambda;
-            }
-            exact = move.reward + TCUpdate(move.after, delta[move.after]);
-            delta.erase(delta.find(move.after));
+            error = error * lambda + exact - (move.value - move.reward);
+            exact = move.reward + TCUpdate(move.after, rate * error);
         }
     }
     
-    void MakeStat(int n, board_t b, int score, double progress) {
+    void MakeStat(int n, board_t b, int score) {
         scores.push_back(score);
         max_tile.push_back(MaxRank(b));
         if (n % interval == 0) {
@@ -111,9 +111,9 @@ public:
             int stat[16] = { 0 };
             for (int i : max_tile) stat[i]++;
             float mean = float(sum) / 1000;
-            std::cout << n << "\tmean = " << mean;
+            std::cout << "STAGE " << stage + 1;
+            std::cout << '\t' << n << "\tmean = " << mean;
             std::cout << "\tmax = " << max;
-            std::cout << "\tprogress: " << progress * 100 << '%';
             std::cout << '\n';
             float accu = 0.0f;
             for (int i = 0xf; i > 0; i--) {
@@ -125,6 +125,58 @@ public:
             scores.clear();
             max_tile.clear();
         }
+    }
+
+    unsigned LearnEpisode(int n) {
+        unsigned moves = 0;
+        int score = 0;
+        board_t board;
+        if (!stage) board = AddTile(AddTile(0));
+        else {
+            board = starts.back().first;
+            score = starts.back().second;
+            starts.push({board, score});
+        }
+        for (;;) {
+            State best = SelectBestMove(board);
+            path.push_back(best);
+            if (best.isValid()) {
+                score += best.reward;
+                board = AddTile(best.after);
+                moves++;
+            }
+            else break;
+        }
+        BackwardLearning();
+        MakeStat(n, board, score);
+        return moves;
+    }
+    
+    std::pair<board_t, int> CollectBoard() {
+        board_t new_board = 0;
+        int new_score = 0;
+        int score = 0;
+        board_t board;
+        if (!stage) board = AddTile(AddTile(0));
+        else {
+            board = starts.back().first;
+            score = starts.back().second;
+            starts.push({board, score});
+        }
+        for (;;) {
+            if (Sum(board) >= 2048 * (stage + 1)) {
+                new_board = board;
+                new_score = score;
+                break;
+            }
+            State best = SelectBestMove(board);
+            if (best.isValid()) {
+                score += best.reward;
+                board = AddTile(best.after);
+            }
+            else break;
+        }
+        return {new_board, new_score};
     }
 };
 
