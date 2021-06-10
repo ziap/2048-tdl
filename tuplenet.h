@@ -71,23 +71,25 @@ private:
         static float Update(board_t b, float u, float* w) {
             float value = 0;
             for (int i = 0; i < 8; i++) {
+                float alpha = 1;
                 board_t index = 0;
                 for (int j : T::isomorphic[i]) index = ((index << 4) | Tile(b, j));
+#ifdef USE_COHERENCE
+                float& error = w[index + Tuples<Features...>::number_of_weights];
+                float& abs_error = w[index + 2 * Tuples<Features...>::number_of_weights];
+                if (abs_error != 0) alpha = abs(error) / abs_error;
+#endif
+                w[index] += alpha * u;
+#ifdef USE_COHERENCE
+                error += u;
+                abs_error += abs(u);
+#endif
                 value += w[index];
-                w[index] += u;
             }
             return value;
         }
 
-        static std::vector<board_t> GetIndex(board_t b, board_t offset) {
-            std::vector<board_t> result;
-            for (int i = 0; i < 8; i++) {
-                board_t index = 0;
-                for (int j : T::isomorphic[i]) index = ((index << 4) | Tile(b, j));
-                result.push_back(index + offset);
-            }
-            return result;
-        };
+
     };
 
     template<class T, class...Targs>
@@ -101,19 +103,15 @@ private:
         static float Update(board_t b, float u, float* w) {
             return Tuples<T>::Update(b, u, w) + Tuples<Targs...>::Update(b, u, w + Tuples<T>::number_of_weights);
         }
-
-        static std::vector<board_t> GetIndex(board_t b, board_t offset) {
-            std::vector<board_t> a = Tuples<T>::GetIndex(b, offset);
-            std::vector<board_t> ext = Tuples<Targs...>::GetIndex(b, offset + Tuples<T>::number_of_weights);
-            a.reserve(ext.size());
-            a.insert(a.end(), ext.begin(), ext.end());
-            return a;
-        }
     };
 public:
 
     // The weights of the model
-    float weights[Tuples<Features...>::number_of_weights];
+#ifndef USE_COHERENCE
+    float* weights = new float[Tuples<Features...>::number_of_weights];
+#else
+    float* weights = new float[Tuples<Features...>::number_of_weights * 3];
+#endif
 
     // Size of the model
     static constexpr unsigned length = sizeof...(Features);
@@ -130,24 +128,20 @@ public:
     // Save the model to a binary file
     void Save(std::string path) {
         std::ofstream fout(path.c_str(), std::ios::out | std::ios::binary);
-        fout.write((char*)((float*)weights), sizeof(float) * Tuples<Features...>::number_of_weights);
+        fout.write((char*)weights, sizeof(float) * Tuples<Features...>::number_of_weights);
         fout.close();
     }
 
     // Load the model from a binary file
     void Load(std::string path) {
         std::ifstream fin(path.c_str(), std::ios::out | std::ios::binary);
-        if (fin.is_open()) fin.read((char*)((float*)weights), sizeof(float) * Tuples<Features...>::number_of_weights);
+        if (fin.is_open()) fin.read((char*)weights, sizeof(float) * Tuples<Features...>::number_of_weights);
         fin.close();
-    }
-
-    // Get the indexes of all active weights
-    std::vector<board_t> GetIndex(board_t b) {
-        return Tuples<Features...>::GetIndex(b, 0);
     }
 };
 
 typedef TupleNetwork<Pattern<0, 1, 2, 3, 4, 5>, Pattern<4, 5, 6, 7, 8, 9>, Pattern<0, 1, 2, 4, 5, 6>, Pattern<4, 5, 6, 8, 9, 10>> nw4x6tuples;
+typedef TupleNetwork<Pattern<0, 1, 2, 3, 4>, Pattern<4, 5, 6, 7, 8>, Pattern<8, 9, 10, 11, 12>, Pattern<0, 1, 2, 4, 5>, Pattern<4, 5, 6, 8, 9>, Pattern<8, 9, 10, 12, 13>> nw6x5tuples;
 typedef TupleNetwork<Pattern<0, 1, 2, 3>, Pattern<4, 5, 6, 7>, Pattern<0, 1, 4, 5>, Pattern<1, 2, 5, 6>, Pattern<5, 6, 9, 10>> nw5x4tuples;
 
 #endif //TUPLENET_H

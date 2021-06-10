@@ -5,7 +5,11 @@
 #include <queue>
 #include <utility>
 #include <unordered_map>
+
+//#define USE_COHERENCE
 #include "tuplenet.h"
+
+std::ofstream score_log("score.tcl.csv");
 
 class State {
 public:
@@ -76,25 +80,12 @@ public:
         return best;
     }
 
-    float TCUpdate(board_t b, float u) {
-        float value = 0;
-        std::vector<board_t> active_weights = network.GetIndex(b);
-        for (board_t weight : active_weights) {
-            float alpha = ((abs_errors.weights[weight] == 0.0f) ? 1.0f : (abs(errors.weights[weight]) / abs_errors.weights[weight]));
-            network.weights[weight] += alpha * u / (8 * network.length);
-            value += network.weights[weight];
-            errors.weights[weight] += u;
-            abs_errors.weights[weight] += abs(u);
-        }
-        return value;
-    }
-
     void BackwardLearning() {
         float exact = 0, error = 0;
         for (path.pop_back();path.size(); path.pop_back()) {
             State move = path.back();
             error = error * lambda + exact - (move.value - move.reward);
-            exact = move.reward + TCUpdate(move.after, rate * error);
+            exact = move.reward + network.Update(move.after, rate * error);
         }
     }
     
@@ -110,7 +101,7 @@ public:
             }
             int stat[16] = { 0 };
             for (int i : max_tile) stat[i]++;
-            float mean = float(sum) / 1000;
+            float mean = float(sum) / float(interval);
             std::cout << "STAGE " << stage + 1;
             std::cout << '\t' << n << "\tmean = " << mean;
             std::cout << "\tmax = " << max;
@@ -122,6 +113,7 @@ public:
                     std::cout << '\t' << (1 << i) << '\t' << accu * 0.1f << "%\t" << float(stat[i]) * 0.1f << "%\n";
                 }
             }
+            score_log << mean << ',' << max << '\n';
             scores.clear();
             max_tile.clear();
         }
