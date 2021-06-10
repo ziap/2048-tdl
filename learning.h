@@ -6,7 +6,7 @@
 #include <utility>
 #include <unordered_map>
 
-//#define USE_COHERENCE
+#define USE_COHERENCE
 #include "tuplenet.h"
 
 std::ofstream score_log("score.tcl.csv");
