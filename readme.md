@@ -1,5 +1,5 @@
 # 2048 Temporal Difference Learning
- A 2048 agent with N-Tuple Network trained using Delayed Backward Temporal Difference Learning.
+ A 2048 agent with N-Tuple Network trained using Backward Temporal Coherence Learning.
  
 ## Benchmark (Intel® Core™ i5-8300H Processor)
 1 ply search is the trained model without any tree search algorithm
@@ -16,8 +16,10 @@
 Trained model detail:
 
  - 4 Tuple with size of 6 (256MB total)
- - α = 1
+ - Temporal Coherence Learning with β = 1.0
  - λ = 0.5
+ - Training speed: 500000 moves per second
+ - Testing speed: 700000 moves per second
 
 ## Optimizations
  To achieve high speed and fast learning, both the agent and training code is heavily optimized:
@@ -26,7 +28,7 @@ Trained model detail:
  - Table lookup for movement and reward.
  - Transposistion table with Zobrist Hash.
  - Bit optimizations.
- - Efficient static N-Tuple Network implementation.
+ - Efficient N-Tuple Network implementation.
 
 ## Usage
 
