@@ -1,10 +1,12 @@
 #include "learning.h"
 
 #include "seed.h"
-#include "getkey.h"
 
+#ifndef STRUCTURE
+    #define STRUCTURE nw4x6
+#endif // STRUCTURE
 
-Learning<nw4x6tuples> tdl(0, 1.0, 0.5, 1000);
+Learning<STRUCTURE> tdl(0, 1.0, 0.5, 1000);
 
 int main() {
     long long seed = RandomSeed();

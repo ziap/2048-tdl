@@ -17,7 +17,9 @@
 #include <cstring>
 #include <cstdio>
 
-#define STRUCTURE nw4x6tuples
+#ifndef STRUCTURE
+    #define STRUCTURE nw4x6
+#endif // STRUCTURE
 
 bool showboard = false;
 int games = 1, port = 0;

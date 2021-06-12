@@ -5,6 +5,8 @@
 1 ply search is the trained model without any tree search algorithm
  
 5 ply is depth 2 expectimax search with the trained model for evaluation function
+
+(Further training and testing needed)
  
 [//]: # (| Depth | Games | Scores | % 16384 | % 8192 | % 4096 | Moves/s |)
 [//]: # (|-------|-------|--------|---------|--------|--------|---------|)
@@ -13,9 +15,9 @@
 
 Trained model detail:
 
- - 5 Tuple with size of 4 (1.25MB total)
+ - 4 Tuple with size of 6 (256MB total)
  - α = 1
- - λ = 0.5 (5 step return)
+ - λ = 0.5
 
 ## Optimizations
  To achieve high speed and fast learning, both the agent and training code is heavily optimized:
@@ -28,21 +30,26 @@ Trained model detail:
 
 ## Usage
 
-Download and unzip the trained model [here](../../releases/latest).
+Download and unzip the trained model (4x6tuple network) [here](../../releases/latest).
 
 ### Build
 
+You can specify a N-tuple network structure when building the AI. The default structure is 4x6 tuples.
+
+If you change the network structure, you'll have to delete the trained model and train the AI from scratch.
+
 ```
-make
+make STRUCTURE=[nw5x4/nw4x6/nw5x6]
 ```
+
 ### Train model
 
 ```
-./2048
+./train
 ```
 You can train the model from scratch or a trained model.
  
-The training process can be stopped anytime by pressing x, or after 10 billion moves which take around 5.5 hours.
+Training last 100000 games.
  
 ### Run agent
 Parameters:
@@ -54,17 +61,13 @@ Parameters:
 Example:
 
 ```sh
-./2048 -d2 -i100 # 5 ply, 100 games
-./2048 -d4 -s    # 11 ply, 1 game, show board 	
+./agent -d2 -i100 # 5 ply, 100 games
+./agent -d4 -s    # 11 ply, 1 game, show board 	
 ```
 
 A game with show board option enabled:
 
 ```
-Tuple 012345 loaded from weights.bin
-Tuple 456789 loaded from weights.bin
-Tuple 012456 loaded from weights.bin
-Tuple 45689A loaded from weights.bin
 seed = 2899209538       depth = 4
 +-------+-------+-------+-------+
 |   128 |    64 |     4 |     2 |
