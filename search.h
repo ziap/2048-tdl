@@ -72,4 +72,4 @@ public:
 template<class T>
 TranspositionTable Search<T>::transposition;
 
-#endif // SEARCH_H
+#endif

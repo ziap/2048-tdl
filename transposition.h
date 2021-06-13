@@ -55,4 +55,4 @@ private:
     }
 };
 
-#endif // TRANSPOSITION_H
+#endif

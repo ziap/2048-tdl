@@ -170,4 +170,4 @@ private:
     }
 } move;
 
-#endif // BOARD_H
+#endif

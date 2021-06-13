@@ -42,7 +42,6 @@ private:
         }
         return isomorphic;
     }
-
 };
 
 template<int...pattern> std::array<std::array<int, Pattern<pattern...>::length>, 8> Pattern<pattern...>::isomorphic = BuildIsomorphic();
@@ -88,8 +87,6 @@ private:
             }
             return value;
         }
-
-
     };
 
     template<class T, class...Targs>
@@ -130,6 +127,11 @@ public:
         std::ofstream fout(path.c_str(), std::ios::out | std::ios::binary);
         fout.write((char*)weights, sizeof(float) * Tuples<Features...>::number_of_weights);
         fout.close();
+#ifdef USE_COHERENCE
+        fout.open((path + ".tc").c_str(), std::ios::out | std::ios::binary);
+        fout.write((char*)(weights + Tuples<Features...>::number_of_weights), sizeof(float) * Tuples<Features...>::number_of_weights * 2);
+        fout.close();
+#endif
     }
 
     // Load the model from a binary file
@@ -137,6 +139,11 @@ public:
         std::ifstream fin(path.c_str(), std::ios::out | std::ios::binary);
         if (fin.is_open()) fin.read((char*)weights, sizeof(float) * Tuples<Features...>::number_of_weights);
         fin.close();
+#ifdef USE_COHERENCE
+        fin.open((path + ".tc").c_str(), std::ios::out | std::ios::binary);
+        fin.read((char*)(weights + Tuples<Features...>::number_of_weights), sizeof(float) * Tuples<Features...>::number_of_weights * 2);
+        fin.close();
+#endif
     }
 };
 
@@ -144,4 +151,4 @@ typedef TupleNetwork<Pattern<0, 1, 2, 3, 4, 5>, Pattern<4, 5, 6, 7, 8, 9>, Patte
 typedef TupleNetwork<Pattern<0, 1, 2, 3, 4, 5>, Pattern<4, 5, 6, 7, 8, 9>, Pattern<8, 9, 10, 11, 12, 13>, Pattern<0, 1, 2, 4, 5, 6>, Pattern<4, 5, 6, 8, 9, 10>> nw5x6;
 typedef TupleNetwork<Pattern<0, 1, 2, 3>, Pattern<4, 5, 6, 7>, Pattern<0, 1, 4, 5>, Pattern<1, 2, 5, 6>, Pattern<5, 6, 9, 10>> nw5x4;
 
-#endif //TUPLENET_H
+#endif

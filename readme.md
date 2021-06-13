@@ -15,7 +15,7 @@
 
 Trained model detail:
 
- - 4 Tuple with size of 6 (256MB total)
+ - 4 Tuples with size of 6 (256MB total)
  - Temporal Coherence Learning with β = 1.0
  - λ = 0.5
  - Training speed: 500000 moves per second

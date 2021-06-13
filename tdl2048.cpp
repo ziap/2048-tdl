@@ -4,7 +4,7 @@
 
 #ifndef STRUCTURE
     #define STRUCTURE nw4x6
-#endif // STRUCTURE
+#endif
 
 Learning<STRUCTURE> tdl(0, 1.0, 0.5, 1000);
 
