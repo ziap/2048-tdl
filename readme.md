@@ -18,8 +18,6 @@ Trained model detail:
  - 4 Tuples with size of 6 (256MB total)
  - Temporal Coherence Learning with β = 1.0
  - λ = 0.5
- - Training speed: 900000 moves per second
- - Testing speed: 1400000 moves per second
 
 ## Optimizations
  To achieve high speed and fast learning, both the agent and training code is heavily optimized:
