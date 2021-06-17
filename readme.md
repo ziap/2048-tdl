@@ -46,10 +46,10 @@ make STRUCTURE=[Structure]
 Available structures:
 | Structure | Size    | Speed (Intel® Core™ i5-8300H Processor) |
 |-----------|---------|-----------------------------------------|
-| nw5x4     | 1.25 MB | 3.5 million moves/s                     |
-| nw9x5     | 36 MB   | 1.6 million moves/s                     |
-| nw4x6     | 256 MB  | 1.7 million moves/s                     |
-| nw5x6     | 320 MB  | 1.1 million moves/s                     |
+| nw5x4     | 1.25 MB | 3.9 million moves/s                     |
+| nw9x5     | 36 MB   | 1.5 million moves/s                     |
+| nw4x6     | 256 MB  | 1.8 million moves/s                     |
+| nw5x6     | 320 MB  | 1.2 million moves/s                     |
 
 ### Train model
 
