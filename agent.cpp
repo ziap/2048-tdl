@@ -33,7 +33,7 @@ void ShowStat(int n) {
     if (!showboard) std::cout << "\033[u";
     std::cout << "progress: " << n << '/' << games;
     std::cout << "\n\033[Kaverage score: " << std::accumulate(scores.begin(), scores.end(), 0) / n << '\n';
-    std::cout << "\033[Kaverage speed: " << std::accumulate(speeds.begin(), speeds.end(), 0.0) / (double)n << " moves per second\n";
+    std::cout << "\033[Kaverage speed: " << std::fixed << std::accumulate(speeds.begin(), speeds.end(), 0.0) / (double)n << " moves per second\n";
     int accu = 0;
     for (int i = 15; i > 0; i--) {
         if (!rate[i]) continue;
@@ -58,14 +58,14 @@ void RunAgent(int client_socket) {
     board_t layout = std::strtoull(board, NULL, 16);
 
     float best = 0;
-            int dir = -1;
-            for (int i = 0; i < 4; i++) {
-                float val = search(layout, i);
-                if (val > best) {
-                    best = val;
-                    dir = i;
-                }
-            }
+    int dir = -1;
+    for (int i = 0; i < 4; i++) {
+        float val = search(layout, i);
+        if (val > best) {
+            best = val;
+            dir = i;
+        }
+    }
 
     std::string reply(
         "HTTP/1.1 200 OK\n"
