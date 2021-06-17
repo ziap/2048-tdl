@@ -95,6 +95,7 @@ public:
         }
     }
     
+    // Print statistics of the learning process
     void MakeStat(int n, board_t b, int score) {
         scores.push_back(score);
         max_tile.push_back(MaxRank(b));
@@ -125,6 +126,7 @@ public:
         }
     }
 
+    // Play a game and update the network
     unsigned LearnEpisode(int n) {
         unsigned moves = 0;
         int score = 0;
@@ -150,6 +152,7 @@ public:
         return moves;
     }
     
+    // Collect boards for the next stage
     std::pair<board_t, int> CollectBoard() {
         board_t new_board = 0;
         int new_score = 0;

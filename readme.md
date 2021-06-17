@@ -29,6 +29,7 @@ Trained model detail:
  - Transposistion table with Zobrist Hash.
  - Bit optimizations.
  - Efficient N-Tuple Network implementation.
+ - Template based isomorphic pattern structure.
 
 ## Usage
 
@@ -40,9 +41,17 @@ You can specify a N-tuple network structure when building the AI. The default st
 
 If you change the network structure, you'll have to delete the trained model and train the AI from scratch.
 
+```sh
+make STRUCTURE=[Structure]
 ```
-make STRUCTURE=[nw5x4/nw4x6/nw5x6]
-```
+
+Available structures:
+| Structure | Size    | Speed (Intel® Core™ i5-8300H Processor) |
+|-----------|---------|-----------------------------------------|
+| nw5x4     | 1.25 MB | 3.5 million moves/s                     |
+| nw9x5     | 36 MB   | 1.6 million moves/s                     |
+| nw4x6     | 256 MB  | 1.4 million moves/s                     |
+| nw5x6     | 320 MB  | 1.1 million moves/s                     |
 
 ### Train model
 
