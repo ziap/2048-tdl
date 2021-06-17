@@ -37,8 +37,6 @@ Download and unzip the trained model (4x6tuple network) [here](../../releases/la
 
 You can specify a N-tuple network structure when building the AI. The default structure is 4x6 tuples.
 
-If you change the network structure, you'll have to delete the trained model and train the AI from scratch.
-
 ```sh
 make STRUCTURE=[Structure]
 ```

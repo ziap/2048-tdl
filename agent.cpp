@@ -21,6 +21,10 @@
     #define STRUCTURE nw4x6
 #endif
 
+#ifndef FILE_NAME
+    #define FILE_NAME "weights.bin"
+#endif
+
 bool showboard = false;
 int games = 1, port = 0;
 std::vector<double> speeds;
@@ -129,7 +133,7 @@ void RunServer(int server_port) {
 }
 
 int main(int argc, char* argv[]) {
-    search.network.Load("weights.bin");
+    search.network.Load(FILE_NAME);
     int c;
     while ((c = getopt(argc, argv, "d:i:sS:")) != -1) switch (c) {
     case 'd':
