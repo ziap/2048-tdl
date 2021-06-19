@@ -69,7 +69,7 @@ private:
         }
     };
 public:
-     
+
     static float Estimate(board_t b, float* w) {
         float value = 0;
         value += Isomorphic<0>::Estimate(b, w);

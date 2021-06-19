@@ -6,12 +6,12 @@
  
 5 ply is depth 2 expectimax search with the trained model for evaluation function
 
-(Further training and testing needed)
- 
-[//]: # (| Depth | Games | Scores | % 16384 | % 8192 | % 4096 | Moves/s |)
-[//]: # (|-------|-------|--------|---------|--------|--------|---------|)
-[//]: # (| 1 ply | 10000 | 208000 | 47      | 84     | 95     | 700000  |)
-[//]: # (| 5 ply | 1000  | 320000 | 93      | 100    | 100    | 3000    |)
+| Depth | Games | Scores | % 16384 | % 8192 | % 4096 | Moves/s |
+|-------|-------|--------|---------|--------|--------|---------|
+| 1 ply | 10000 | 221758 | 51.68   | 86.94  | 96.26% | 1737604 |
+| 5 ply | 1000  | 322862 | 91.7    | 99.3   | 99.8   | 7301    |
+
+4 games with 5 ply search reached 32768
 
 Trained model detail:
 
@@ -20,7 +20,7 @@ Trained model detail:
  - λ = 0.5
 
 ## Optimizations
- To achieve high speed and fast learning, both the agent and training code is heavily optimized:
+ To achieve high speed and fast learning, both the agent and training code are heavily optimized:
  
  - 64-bit bitboard representation.
  - Table lookup for movement and reward.
@@ -56,7 +56,7 @@ Available structures:
 ```
 You can train the model from scratch or a trained model.
  
-Training last 100000 games.
+Training last 1000000 games.
  
 ### Run agent
 Parameters:

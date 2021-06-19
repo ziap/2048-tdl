@@ -28,7 +28,7 @@
 bool showboard = false;
 int games = 1, port = 0;
 std::vector<double> speeds;
-std::vector<unsigned> scores;
+std::vector<double> scores;
 int rate[16] = { 0 };
 
 Search<STRUCTURE> search;
@@ -36,9 +36,10 @@ Search<STRUCTURE> search;
 // Print statistics
 void ShowStat(int n) {
     if (!showboard) std::cout << "\033[u";
+    std::cout << std::fixed << std::setprecision(2);
     std::cout << "progress: " << n << '/' << games;
-    std::cout << "\n\033[Kaverage score: " << std::accumulate(scores.begin(), scores.end(), 0) / n << '\n';
-    std::cout << "\033[Kaverage speed: " << std::fixed << std::accumulate(speeds.begin(), speeds.end(), 0.0) / (double)n << " moves per second\n";
+    std::cout << "\n\033[Kaverage score: " << std::accumulate(scores.begin(), scores.end(), 0.0) / double(n) << '\n';
+    std::cout << "\033[Kaverage speed: " << std::accumulate(speeds.begin(), speeds.end(), 0.0) / (double)n << " moves per second\n";
     int accu = 0;
     for (int i = 15; i > 0; i--) {
         if (!rate[i]) continue;
