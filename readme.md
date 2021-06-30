@@ -47,7 +47,8 @@ Available structures:
 | Structure | Size    |
 |-----------|---------|
 | nw5x4     | 1.25 MB |
-| nw9x5     | 36 MB   |
+| nw4x5     | 16 MB   |
+| nw6x5     | 24 MB   |
 | nw4x6     | 256 MB  |
 | nw5x6     | 320 MB  |
 
