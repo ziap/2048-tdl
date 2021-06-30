@@ -6,10 +6,12 @@
  
 5 ply is depth 2 expectimax search with the trained model for evaluation function
 
-| Depth | Games | Scores | % 16384 | % 8192 | % 4096 | Moves/s |
-|-------|-------|--------|---------|--------|--------|---------|
-| 1 ply | 10000 | 221758 | 51.68   | 86.94  | 96.26  | 1737604 |
-| 5 ply | 1000  | 322862 | 91.7    | 99.3   | 99.8   | 7301    |
+**Need further traing and testing**
+
+[//]: # (| Depth | Games | Scores | % 16384 | % 8192 | % 4096 | Moves/s |)
+[//]: # (|-------|-------|--------|---------|--------|--------|---------|)
+[//]: # (| 1 ply | 10000 | 221758 | 51.68   | 86.94  | 96.26  | 1737604 |)
+[//]: # (| 5 ply | 1000  | 322862 | 91.7    | 99.3   | 99.8   | 7301    |)
 
 4 games with 5 ply search reached 32768
 
@@ -42,23 +44,30 @@ make STRUCTURE=[Structure]
 ```
 
 Available structures:
-| Structure | Size    | Speed (Intel® Core™ i5-8300H Processor) |
-|-----------|---------|-----------------------------------------|
-| nw5x4     | 1.25 MB | 3.9 million moves/s                     |
-| nw9x5     | 36 MB   | 1.5 million moves/s                     |
-| nw4x6     | 256 MB  | 1.8 million moves/s                     |
-| nw5x6     | 320 MB  | 1.2 million moves/s                     |
+| Structure | Size    |
+|-----------|---------|
+| nw5x4     | 1.25 MB |
+| nw9x5     | 36 MB   |
+| nw4x6     | 256 MB  |
+| nw5x6     | 320 MB  |
 
 ### Train model
 
 ```
 ./train
 ```
-You can train the model from scratch or a trained model.
- 
-Training last 1000000 games.
+Parameters:
+ + **-a [Rate]** - The learning rate (default: 1.0)
+ + **-l [Lambda]** - The trace decay parameter (default: 0.5)
+ + **-i [Games]** - Number of training games * 100k (default: 1)
+ + **-r** - Enable reading from a binary file
+ + **-w** - Enable writing to a binary file
  
 ### Run agent
+
+```sh
+./agent
+```
 Parameters:
  
  + **-d [Depth]** - The search depth (default: 0)

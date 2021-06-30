@@ -15,8 +15,6 @@
 #endif
 #include "tuplenet.h"
 
-std::ofstream score_log("score.tcl.csv");
-
 class State {
 public:
     board_t before;
@@ -47,7 +45,7 @@ public:
 };
 
 template<class T>
-class Learning {
+class Learning : public T {
 private:
     float lambda = 0.0f;
 
@@ -55,20 +53,14 @@ private:
 
     std::vector<int> scores, max_tile;
 
-    T errors, abs_errors;
-
 public:
     unsigned stage = 0;
 
     std::queue<std::pair<board_t, int>> starts;
 
-    T network;
-
-    std::vector<State> path;
-
     float rate = 0.1f;
     Learning(unsigned i = 0, float a = 1.0f, float l = 0.0f, int u = 1000) {
-        rate = a / (8 * network.length);
+        rate = a / (8 * this->length);
         lambda = l;
         interval = u;
         stage = i;
@@ -79,22 +71,13 @@ public:
         for (int i = 0; i < 4; i++) {
             State after(b, i);
             if (after.isValid()) {
-                after.value = after.reward + network.Estimate(after.after);
+                after.value = after.reward + this->Estimate(after.after);
                 if (!best.isValid() || after.value > best.value) best = after;
             }
         }
         return best;
     }
 
-    void BackwardLearning() {
-        float exact = 0, error = 0;
-        for (path.pop_back();path.size(); path.pop_back()) {
-            State move = path.back();
-            error = error * lambda + exact - (move.value - move.reward);
-            exact = move.reward + network.Update(move.after, rate * error);
-        }
-    }
-    
     // Print statistics of the learning process
     void MakeStat(int n, board_t b, int score) {
         scores.push_back(score);
@@ -109,8 +92,8 @@ public:
             int stat[16] = { 0 };
             for (int i : max_tile) stat[i]++;
             float mean = float(sum) / float(interval);
-            std::cout << "STAGE " << stage + 1;
-            std::cout << '\t' << n << "\tmean = " << mean;
+            //std::cout << "STAGE " << stage + 1 << '\t';
+            std::cout << n << "\tmean = " << mean;
             std::cout << "\tmax = " << max;
             std::cout << '\n';
             float accu = 0.0f;
@@ -120,7 +103,6 @@ public:
                     std::cout << '\t' << (1 << i) << '\t' << accu * 0.1f << "%\t" << float(stat[i]) * 0.1f << "%\n";
                 }
             }
-            score_log << mean << ',' << max << '\n';
             scores.clear();
             max_tile.clear();
         }
@@ -128,6 +110,7 @@ public:
 
     // Play a game and update the network
     unsigned LearnEpisode(int n) {
+        std::vector<State> path;
         unsigned moves = 0;
         int score = 0;
         board_t board;
@@ -139,15 +122,20 @@ public:
         }
         for (;;) {
             State best = SelectBestMove(board);
-            path.push_back(best);
             if (best.isValid()) {
+                path.push_back(best);
                 score += best.reward;
                 board = AddTile(best.after);
                 moves++;
             }
             else break;
         }
-        BackwardLearning();
+        float exact = 0, error = 0;
+        for (; path.size(); path.pop_back()) {
+            State move = path.back();
+            error = exact - this->Estimate(move.after);
+            exact = move.reward + lambda * exact + (1 - lambda) * this->Update(move.after, rate * error);
+        }
         MakeStat(n, board, score);
         return moves;
     }

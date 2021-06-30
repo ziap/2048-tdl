@@ -134,7 +134,7 @@ void RunServer(int server_port) {
 }
 
 int main(int argc, char* argv[]) {
-    search.network.Load(FILE_NAME);
+    search.Load(FILE_NAME);
     int c;
     while ((c = getopt(argc, argv, "d:i:sS:")) != -1) switch (c) {
     case 'd':

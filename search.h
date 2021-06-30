@@ -7,7 +7,7 @@
 
 // The search algorithm
 template <class T>
-class Search {
+class Search : public T {
 private:
 
     static TranspositionTable transposition;
@@ -29,7 +29,7 @@ private:
     // Chance node of expectimax tree search
     float ExpectimaxSpawn(board_t b, int depth) {
         float expect = 0;
-        if (depth <= 0) return network.Estimate(b);
+        if (depth <= 0) return this->Estimate(b);
         int current_evaled = state_evaled;
         state_evaled += transposition.Lookup(b, depth, &expect);
         if (state_evaled > current_evaled) return expect;
@@ -47,8 +47,6 @@ private:
         return expect;
     };
 public:
-
-    T network;
 
     int min_depth = 0;
     

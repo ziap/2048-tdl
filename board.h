@@ -19,6 +19,9 @@ typedef unsigned short row_t;
 // Mirror row
 #define ReverseRow(row) row_t((row >> 12) | ((row >> 4) & 0x00F0) | ((row << 4) & 0x0F00) | (row << 12))
 
+// Flip board
+#define Flip(b) (((b & 0x000000000000ffffULL) << 48) | ((b & 0x00000000ffff0000ULL) << 16) | ((b & 0x0000ffff00000000ULL) >> 16) | ((b & 0xffff000000000000ULL) >> 48))
+
 // Print the board
 void PrintBoard(board_t b) {
     std::cout << "+-------+-------+-------+-------+\n";
