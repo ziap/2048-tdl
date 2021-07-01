@@ -28,9 +28,8 @@ Trained model detail:
  - Table lookup for movement and reward.
  - Transposistion table with Zobrist Hash.
  - Bit optimizations.
- - Efficient N-Tuple Network implementation.
- - Template based isomorphic pattern structure.
-
+ - Efficient N-Tuple Network implementation with static structure.
+ 
 ## Usage
 
 Download and unzip the trained model (4x6tuple network) [here](../../releases/latest).
@@ -44,13 +43,13 @@ make STRUCTURE=[Structure]
 ```
 
 Available structures:
-| Structure | Size    |
-|-----------|---------|
-| nw5x4     | 1.25 MB |
-| nw4x5     | 16 MB   |
-| nw6x5     | 24 MB   |
-| nw4x6     | 256 MB  |
-| nw5x6     | 320 MB  |
+| Structure | Size    | Speed         |
+|-----------|---------|---------------|
+| nw5x4     | 1.25 MB | 5.1e6 moves/s |
+| nw4x5     | 16 MB   | 4.3e6 moves/s |
+| nw6x5     | 24 MB   | 3.2e6 moves/s |
+| nw4x6     | 256 MB  | 2.3e6 moves/s |
+| nw5x6     | 320 MB  | 1.8e6 moves/s |
 
 ### Train model
 

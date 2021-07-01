@@ -14,8 +14,8 @@
 
 int main(int argc, char* argv[]) {
     int c;
-    float alpha = 1.0f;
-    float lambda = 0.5f;
+    float alpha = 1.0;
+    float lambda = 0.5;
     unsigned games = 100000;
     bool read = false;
     bool write = false;
