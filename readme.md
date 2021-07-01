@@ -43,13 +43,13 @@ make STRUCTURE=[Structure]
 ```
 
 Available structures:
-| Structure | Size    | Speed         |
-|-----------|---------|---------------|
-| nw5x4     | 1.25 MB | 5.1e6 moves/s |
-| nw4x5     | 16 MB   | 4.3e6 moves/s |
-| nw6x5     | 24 MB   | 3.2e6 moves/s |
-| nw4x6     | 256 MB  | 2.3e6 moves/s |
-| nw5x6     | 320 MB  | 1.8e6 moves/s |
+| Structure | Size    | Speed          |
+|-----------|---------|----------------|
+| nw5x4     | 1.25 MB | 5.1E+6 moves/s |
+| nw4x5     | 16 MB   | 4.3E+6 moves/s |
+| nw6x5     | 24 MB   | 3.2E+6 moves/s |
+| nw4x6     | 256 MB  | 2.3E+6 moves/s |
+| nw5x6     | 320 MB  | 1.8E+6 moves/s |
 
 ### Train model
 
