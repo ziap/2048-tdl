@@ -27,7 +27,7 @@ make STRUCTURE=nw4x6
 # Run the agent for 10000 games with no search
 ./agent -i 10000
 
-# Run the agent for 1000 games with no 5 ply search
+# Run the agent for 1000 games with 5 ply search
 ./agent -i 1000 -d 2
 ```
 
