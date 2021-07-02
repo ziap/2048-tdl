@@ -8,20 +8,31 @@
 
 **Need further traing and testing**
 
-[//]: # (| Depth | Games | Scores | % 16384 | % 8192 | % 4096 | Moves/s |)
-[//]: # (|-------|-------|--------|---------|--------|--------|---------|)
-[//]: # (| 1 ply | 10000 | 221758 | 51.68   | 86.94  | 96.26  | 1737604 |)
-[//]: # (| 5 ply | 1000  | 322862 | 91.7    | 99.3   | 99.8   | 7301    |)
+| Depth | Games | Scores | % 16384 | % 8192 | % 4096 | Moves/s |
+|-------|-------|--------|---------|--------|--------|---------|
+| 1 ply | 10000 | 224013 | 54.30   | 89.75  | 97.58  | 2349354 |
+| 5 ply | 1000  | 328087 | 92.3    | 99.5   | 99.9   | 10982   |
 
-4 games with 5 ply search reached 32768
+2 games with 5 ply search reached 32768
 
-Trained model detail:
+You can achieve similar results with:
 
- - 4 Tuples with size of 6 (256MB total)
- - Temporal Coherence Learning with β = 1.0
- - λ = 0.5
+```sh
+# Build the program with the 4x6 tuple network
+make STRUCTURE=nw4x6
+
+# Train the network with 1 million games, α = 1.0, λ = 0.5
+./train -i 10 -a 1.0 -l 0.5 -w
+
+# Run the agent for 10000 games with no search
+./agent -i 10000
+
+# Run the agent for 1000 games with no 5 ply search
+./agent -i 1000 -d 2
+```
 
 ## Optimizations
+
  To achieve high speed and fast learning, both the agent and training code are heavily optimized:
  
  - 64-bit bitboard representation.
@@ -97,4 +108,5 @@ seed = 2899209538       depth = 4
 ```
 
 # License
+
  This app is licensed under the MIT license.
