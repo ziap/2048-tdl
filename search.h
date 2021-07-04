@@ -21,7 +21,7 @@ private:
         for (int i = 0; i < 4; i++) {
             board_t moved = move(b, i);
             if (moved == b) continue;
-            max = std::max(max, ExpectimaxSpawn(moved, depth));
+            max = std::max(max, (float)move.Score(b, i) + ExpectimaxSpawn(moved, depth));
         }
         return max;
     }
@@ -63,7 +63,7 @@ public:
             state_evaled = 0;
             value = ExpectimaxSpawn(new_board, depth);
         }
-        return value;
+        return (float)move.Score(b, dir) + value;
     }
 };
 

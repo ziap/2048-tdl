@@ -52,7 +52,6 @@ public:
             float& error = w[index + n];
             float& abs_error = w[index + 2 * n];
             if (abs_error != 0) alpha = std::abs(error) / abs_error;
-            //std::cout << u << '\n';
 #endif
             w[index] += alpha * u;
             value += w[index];

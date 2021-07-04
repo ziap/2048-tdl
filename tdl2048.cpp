@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     case 'w':
         write = true;
     }
-    Learning<STRUCTURE> tdl(0, alpha, lambda, 1000);
+    Learning<STRUCTURE> tdl(alpha, lambda, 1000);
     long long seed = RandomSeed();
     srand(seed);
 
