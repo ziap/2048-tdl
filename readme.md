@@ -11,8 +11,6 @@
 | 1 ply | 10000 | 169236 | 1.45    | 30.19   | 68.08  | 2349354 |
 | 5 ply | 1000  | 390726 | 30.8    | 80.3    | 93.8   | 10982   |
 
-2 games with 5 ply search reached 32768
-
 You can achieve similar results with:
 
 ```sh
