@@ -31,8 +31,10 @@ int main(int argc, char* argv[]) {
         break;
     case 'r':
         read = true;
+        break;
     case 'w':
         write = true;
+        break;
     }
     Learning<STRUCTURE> tdl(alpha, lambda, 1000);
     long long seed = RandomSeed();

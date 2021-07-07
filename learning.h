@@ -84,26 +84,35 @@ public:
     // Play a game and update the network
     unsigned LearnEpisode(int n) {
         unsigned moves = 0;
-        board_t board = AddTile(AddTile(0));
-        std::vector<std::pair<board_t, float>> path;
-        int score = 0;
-        for (;;) {
-            std::pair<board_t, float> best = SelectBestMove(board);
-            if (best.second != -1) {
-                path.push_back(best);
-                score += best.second;
-                board = AddTile(best.first);
-                moves++;
+        board_t initboard = AddTile(AddTile(0));
+        bool print_stats = true;
+        while (initboard) {
+            board_t board = initboard;
+            initboard = 0;
+            std::vector<std::pair<board_t, float>> path;
+            int score = 0;
+            for (;;) {
+                std::pair<board_t, float> best = SelectBestMove(board);
+                if (best.second != -1) {
+                    path.push_back(best);
+                    score += best.second;
+                    board = AddTile(best.first);
+                    moves++;
+                }
+                else break;
             }
-            else break;
+            if (path.size() > 10) initboard = AddTile(path[path.size() >> 1].first);
+            float exact = 0, error = 0;
+            for (; path.size(); path.pop_back()) {
+                std::pair<board_t, float> move = path.back();
+                error = exact - this->Estimate(move.first);
+                exact = move.second + lambda * exact + (1 - lambda) * this->Update(move.first, rate * error);
+            }
+            if (print_stats) {
+                MakeStat(n, board, score);
+                print_stats = false;
+            }
         }
-        float exact = 0, error = 0;
-        for (; path.size(); path.pop_back()) {
-            std::pair<board_t, float> move = path.back();
-            error = exact - this->Estimate(move.first);
-            exact = move.second + lambda * exact + (1 - lambda) * this->Update(move.first, rate * error);
-        }
-        MakeStat(n, board, score);
         return moves;
     }
 };

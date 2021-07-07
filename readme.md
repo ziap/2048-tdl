@@ -6,12 +6,10 @@
  
 5 ply is depth 2 expectimax search with the trained model for evaluation function
 
-**Need further traing and testing**
-
-| Depth | Games | Scores | % 16384 | % 8192 | % 4096 | Moves/s |
-|-------|-------|--------|---------|--------|--------|---------|
-| 1 ply | 10000 | 224013 | 54.30   | 89.75  | 97.58  | 2349354 |
-| 5 ply | 1000  | 328087 | 92.3    | 99.5   | 99.9   | 10982   |
+| Depth | Games | Scores | % 32768 | % 16384 | % 8192 | Moves/s |
+|-------|-------|--------|---------|---------|--------|---------|
+| 1 ply | 10000 | 224013 | 1.45    | 30.19   | 68.08  | 2349354 |
+| 5 ply | 1000  | 328087 | 30.8    | 80.3    | 93.8   | 10982   |
 
 2 games with 5 ply search reached 32768
 
