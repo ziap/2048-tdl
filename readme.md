@@ -19,8 +19,8 @@ You can achieve similar results with:
 # Build the program with the 4x6 tuple network
 make STRUCTURE=nw4x6
 
-# Train the network with 1 million games, α = 1.0, λ = 0.5
-./train -i 10 -a 1.0 -l 0.5 -w
+# Train the network with 400000 games, α = 1.0, λ = 0.5
+./train -i 4 -a 1.0 -l 0.5 -w
 
 # Run the agent for 10000 games with no search
 ./agent -i 10000
