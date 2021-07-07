@@ -21,6 +21,8 @@ int rate[16] = { 0 };
 
 Search<STRUCTURE> search;
 
+#include "server.h"
+
 // Print statistics
 void ShowStat(int n) {
     if (!showboard) std::cout << "\033[u";
@@ -39,7 +41,7 @@ void ShowStat(int n) {
 int main(int argc, char* argv[]) {
     search.Load(FILE_NAME);
     int c;
-    while ((c = getopt(argc, argv, "d:i:s")) != -1) switch (c) {
+    while ((c = getopt(argc, argv, "d:i:sS:")) != -1) switch (c) {
     case 'd':
         search.min_depth = atoi(optarg);
         break;
@@ -49,6 +51,13 @@ int main(int argc, char* argv[]) {
     case 's':
         showboard = true;
         break;
+    case 'S':
+        port = atoi(optarg);
+        break;
+    }
+    if (port) {
+        RunServer(port);
+        return 0;
     }
     std::cout << "\x1B[2J\x1B[H";
     long long seed = RandomSeed();
