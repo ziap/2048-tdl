@@ -14,8 +14,6 @@
     #define FILE_NAME "weights.bin"
 #endif
 
-#include "server.h"
-
 bool showboard = false;
 int games = 1, port = 0;
 std::vector<double> speeds;
@@ -23,6 +21,8 @@ std::vector<double> scores;
 int rate[16] = { 0 };
 
 Search<STRUCTURE> search;
+
+#include "server.h"
 
 // Print statistics
 void ShowStat(int n) {
@@ -43,7 +43,7 @@ void ShowStat(int n) {
 int main(int argc, char* argv[]) {
     search.Load(FILE_NAME);
     int c;
-    while ((c = getopt(argc, argv, "d:i:t:s")) != -1) switch (c) {
+    while ((c = getopt(argc, argv, "d:i:t:sS:")) != -1) switch (c) {
     case 'd':
         search.min_depth = atoi(optarg);
         break;
