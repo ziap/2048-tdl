@@ -3,6 +3,7 @@
 #include "seed.h"
 
 #include <cstdlib>
+#include <algorithm>
 #include <getopt.h>
 
 #ifndef STRUCTURE
@@ -21,14 +22,13 @@ int rate[16] = { 0 };
 
 Search<STRUCTURE> search;
 
-#include "server.h"
-
 // Print statistics
 void ShowStat(int n) {
     if (!showboard) std::cout << "\033[u";
     std::cout << std::fixed << std::setprecision(2);
     std::cout << "progress: " << n << '/' << games;
     std::cout << "\n\033[Kaverage score: " << std::accumulate(scores.begin(), scores.end(), 0.0) / double(n) << '\n';
+    std::cout << "\033[Kmaximum score: " << *std::max_element(scores.begin(), scores.end()) << '\n';
     std::cout << "\033[Kaverage speed: " << std::accumulate(speeds.begin(), speeds.end(), 0.0) / (double)n << " moves per second\n";
     int accu = 0;
     for (int i = 15; i > 0; i--) {
@@ -41,23 +41,19 @@ void ShowStat(int n) {
 int main(int argc, char* argv[]) {
     search.Load(FILE_NAME);
     int c;
-    while ((c = getopt(argc, argv, "d:i:sS:")) != -1) switch (c) {
+    while ((c = getopt(argc, argv, "d:i:t:s")) != -1) switch (c) {
     case 'd':
         search.min_depth = atoi(optarg);
         break;
     case 'i':
         games = atoi(optarg);
         break;
+    case 't':
+        search.search_time = atoi(optarg);
+        break;
     case 's':
         showboard = true;
         break;
-    case 'S':
-        port = atoi(optarg);
-        break;
-    }
-    if (port) {
-        RunServer(port);
-        return 0;
     }
     std::cout << "\x1B[2J\x1B[H";
     long long seed = RandomSeed();
@@ -76,15 +72,7 @@ int main(int argc, char* argv[]) {
                 std::cout << "\033[u";
                 PrintBoard(board);
             }
-            float best = 0;
-            int dir = -1;
-            for (int i = 0; i < 4; i++) {
-                float val = search(board, i);
-                if (val > best) {
-                    best = val;
-                    dir = i;
-                }
-            }
+            int dir = search(board);
             if (dir < 0) break;
             moves++;
             score += move.Score(board, dir);

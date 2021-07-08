@@ -3,7 +3,9 @@
 #include "tuplenet.h"
 #include "transposition.h"
 
-#define MIN_STATE 0
+#include <functional>
+#include <thread>
+#include <chrono>
 
 // The search algorithm
 template <class T>
@@ -11,12 +13,8 @@ class Search : public T {
 private:
 
     static TranspositionTable transposition;
-
-    int state_evaled = 0;
-
     // Max node of expectimax tree search
     float ExpectimaxMove(board_t b, int depth) {
-        state_evaled++;
         float max = 0;
         for (int i = 0; i < 4; i++) {
             board_t moved = move(b, i);
@@ -30,9 +28,7 @@ private:
     float ExpectimaxSpawn(board_t b, int depth) {
         float expect = 0;
         if (depth <= 0) return this->Estimate(b);
-        int current_evaled = state_evaled;
-        state_evaled += transposition.Lookup(b, depth, &expect);
-        if (state_evaled > current_evaled) return expect;
+        if (transposition.Lookup(b, depth, &expect)) return expect;
         expect = 0;
         board_t mask = EmptyPos(b);
         int empty = int((mask * 0x1111111111111111ull) >> 60);
@@ -43,27 +39,47 @@ private:
             mask ^= tile;
         }
         expect /= (float)empty;
-        transposition.Update(b, depth, expect, state_evaled - current_evaled);
+        transposition.Update(b, depth, expect);
         return expect;
     };
+
+    int SuggestMove(board_t b, int depth) {
+        int dir = -1;
+        float best = 0;
+        for (int i = 0; i < 4; i++) {
+            board_t new_board = move(b, i);
+            if (new_board == b) continue;
+            float value = ExpectimaxSpawn(new_board, min_depth);
+            if (value > best) {
+                best = value;
+                dir = i;
+            } 
+        }
+        return dir;
+    }
+
+    int SuggestMoveIterative(board_t b, int time) {
+        bool stop = false;
+
+        int dir = -1;
+        std::thread([&]{
+            std::this_thread::sleep_for(std::chrono::milliseconds(time));
+            stop = true;
+        }).detach();
+        for (int depth = min_depth; !stop; depth++) {
+            dir = SuggestMove(b, depth);
+        }
+        return dir;
+    }
 public:
 
     int min_depth = 0;
+
+    int search_time = 0;
     
-    float operator()(board_t b, int dir) {
-        board_t new_board = move(b, dir);
-        if (new_board == b) return 0;
-        state_evaled = 0;
-        int last_evaled = -1;
-        int depth = min_depth;
-        float value = ExpectimaxSpawn(new_board, depth);
-        while (state_evaled < MIN_STATE && state_evaled > last_evaled) {
-            depth++;
-            last_evaled = state_evaled;
-            state_evaled = 0;
-            value = ExpectimaxSpawn(new_board, depth);
-        }
-        return (float)move.Score(b, dir) + value;
+    int operator()(board_t b) {
+        if (!search_time) return SuggestMove(b, min_depth);
+        return SuggestMoveIterative(b, search_time);
     }
 };
 
