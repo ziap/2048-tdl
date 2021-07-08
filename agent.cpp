@@ -14,6 +14,8 @@
     #define FILE_NAME "weights.bin"
 #endif
 
+#include "server.h"
+
 bool showboard = false;
 int games = 1, port = 0;
 std::vector<double> speeds;
@@ -54,6 +56,13 @@ int main(int argc, char* argv[]) {
     case 's':
         showboard = true;
         break;
+    case 'S':
+        port = atoi(optarg);
+        break;
+    }
+    if (port) {
+        RunServer(port);
+        return 0;
     }
     std::cout << "\x1B[2J\x1B[H";
     long long seed = RandomSeed();
