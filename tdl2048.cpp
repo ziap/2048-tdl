@@ -41,7 +41,9 @@ int main(int argc, char* argv[]) {
     srand(seed);
 
     if (read) tdl.Load(FILE_NAME);
+    else std::fill(tdl.weights, tdl.weights + tdl.weights_len, 160.0f);
 
+    std::cout << "Number of weights: " << tdl.weights_len << '\n';
     std::cout << "seed = " << seed << "\t learning rate = " << alpha << '\n';
     unsigned long long moves = 0;
     auto start = std::chrono::high_resolution_clock::now();

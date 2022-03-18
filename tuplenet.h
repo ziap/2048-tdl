@@ -142,10 +142,54 @@ public:
 
 // Predefined structures
 
-typedef TupleNetwork<Pattern<0, 1, 2, 3, 4, 5>, Pattern<4, 5, 6, 7, 8, 9>, Pattern<0, 1, 2, 4, 5, 6>, Pattern<4, 5, 6, 8, 9, 10>> nw4x6;
-typedef TupleNetwork<Pattern<0, 1, 2, 3, 4, 5>, Pattern<4, 5, 6, 7, 8, 9>, Pattern<8, 9, 10, 11, 12, 13>, Pattern<0, 1, 2, 4, 5, 6>, Pattern<4, 5, 6, 8, 9, 10>> nw5x6;
-typedef TupleNetwork<Pattern<0, 1, 2, 3>, Pattern<4, 5, 6, 7>, Pattern<0, 1, 4, 5>, Pattern<1, 2, 5, 6>, Pattern<5, 6, 9, 10>> nw5x4;
-typedef TupleNetwork<Pattern<0, 1, 2, 3, 4>, Pattern<4, 5, 6, 7, 8>, Pattern<0, 1, 2, 4, 5>, Pattern<4, 5, 6, 8, 9>> nw4x5;
-typedef TupleNetwork<Pattern<0, 1, 2, 3, 4>, Pattern<4, 5, 6, 7, 8>, Pattern<8, 9, 10, 11, 12>, Pattern<0, 1, 2, 4, 5>, Pattern<4, 5, 6, 8, 9>, Pattern<8, 9, 10, 12, 13>> nw6x5;
+typedef TupleNetwork<
+    Pattern<0, 1, 2, 3, 4, 5>,
+    Pattern<4, 5, 6, 7, 8, 9>,
+    Pattern<0, 1, 2, 4, 5, 6>,
+    Pattern<4, 5, 6, 8, 9, 10>
+> nw4x6;
+
+typedef TupleNetwork<
+    Pattern<0, 1, 2, 3, 4, 5>,
+    Pattern<4, 5, 6, 7, 8, 9>,
+    Pattern<8, 9, 10, 11, 12, 13>,
+    Pattern<0, 1, 2, 4, 5, 6>,
+    Pattern<4, 5, 6, 8, 9, 10>
+> nw5x6;
+
+typedef TupleNetwork<
+    Pattern<0, 1, 2, 4, 5, 6>,
+    Pattern<1, 2, 5, 6, 9, 13>,
+    Pattern<0, 1, 2, 3, 4, 5>,
+    Pattern<0, 1, 5, 6, 7, 10>,
+    Pattern<0, 1, 2, 5, 9, 10>,
+    Pattern<0, 1, 5, 9, 13, 14>,
+    Pattern<0, 1, 5, 8, 9, 13>,
+    Pattern<0, 1, 2, 4, 6, 10>
+> nw8x6;
+
+typedef TupleNetwork<
+    Pattern<0, 1, 2, 3>,
+    Pattern<4, 5, 6, 7>,
+    Pattern<0, 1, 4, 5>,
+    Pattern<1, 2, 5, 6>,
+    Pattern<5, 6, 9, 10>
+> nw5x4;
+
+typedef TupleNetwork<
+    Pattern<0, 1, 2, 3, 4>,
+    Pattern<4, 5, 6, 7, 8>,
+    Pattern<0, 1, 2, 4, 5>,
+    Pattern<4, 5, 6, 8, 9>
+> nw4x5;
+
+typedef TupleNetwork<
+    Pattern<0, 1, 2, 3, 4>,
+    Pattern<4, 5, 6, 7, 8>,
+    Pattern<8, 9, 10, 11, 12>,
+    Pattern<0, 1, 2, 4, 5>,
+    Pattern<4, 5, 6, 8, 9>,
+    Pattern<8, 9, 10, 12, 13>
+> nw6x5;
 
 #endif

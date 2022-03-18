@@ -101,7 +101,7 @@ public:
                 }
                 else break;
             }
-            if (path.size() > 10) initboard = AddTile(path[path.size() >> 1].first);
+            //if (path.size() > 10) initboard = AddTile(path[path.size() >> 1].first);
             float exact = 0, error = 0;
             for (; path.size(); path.pop_back()) {
                 std::pair<board_t, float> move = path.back();
