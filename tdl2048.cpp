@@ -16,10 +16,11 @@ int main(int argc, char* argv[]) {
     int c;
     float alpha = 1.0;
     float lambda = 0.5;
-    unsigned games = 100000;
+    unsigned games = 1000;
     bool read = false;
     bool write = false;
-    while ((c = getopt(argc, argv, "a:l:i:rw")) != -1) switch (c) {
+    bool restart = false;
+    while ((c = getopt(argc, argv, "a:l:i:rwt")) != -1) switch (c) {
     case 'a':
         alpha = atof(optarg);
         break;
@@ -27,7 +28,7 @@ int main(int argc, char* argv[]) {
         lambda = atof(optarg);
         break;
     case 'i':
-        games = atoi(optarg) * 100000;
+        games = atoi(optarg) * 1000;
         break;
     case 'r':
         read = true;
@@ -35,13 +36,15 @@ int main(int argc, char* argv[]) {
     case 'w':
         write = true;
         break;
+    case 't':
+        restart = true;
+        break;
     }
-    Learning<STRUCTURE> tdl(alpha, lambda, 1000);
+    Learning<STRUCTURE> tdl(alpha, lambda, 1000, restart);
     long long seed = RandomSeed();
     srand(seed);
 
     if (read) tdl.Load(FILE_NAME);
-    else std::fill(tdl.weights, tdl.weights + tdl.weights_len, 160.0f);
 
     std::cout << "Number of weights: " << tdl.weights_len << '\n';
     std::cout << "seed = " << seed << "\t learning rate = " << alpha << '\n';

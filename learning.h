@@ -22,6 +22,8 @@ private:
 
     unsigned interval = 1000;
 
+    bool restart = false;
+
     std::vector<int> scores, max_tile;
 
 public:
@@ -29,10 +31,11 @@ public:
     std::queue<std::pair<board_t, int>> starts;
 
     float rate = 0.1f;
-    Learning(float a = 1.0f, float l = 0.0f, int u = 1000) {
+    Learning(float a = 1.0f, float l = 0.0f, int u = 1000, bool r = false) {
         rate = a / (8 * this->length);
         lambda = l;
         interval = u;
+        restart = r;
     }
 
     std::pair<board_t, float> SelectBestMove(board_t b) {
@@ -101,7 +104,7 @@ public:
                 }
                 else break;
             }
-            //if (path.size() > 10) initboard = AddTile(path[path.size() >> 1].first);
+            if (restart && path.size() > 10) initboard = AddTile(path[path.size() >> 1].first);
             float exact = 0, error = 0;
             for (; path.size(); path.pop_back()) {
                 std::pair<board_t, float> move = path.back();
