@@ -18,7 +18,7 @@ You can achieve similar results with:
 make STRUCTURE=nw4x6
 
 # Train the network with 400000 games, α = 1.0, λ = 0.5
-./train -i 4 -a 1.0 -l 0.5 -w
+./train -i 400 -a 1.0 -l 0.5 -w
 
 # Run the agent for 10000 games with no search
 ./agent -i 10000
@@ -57,6 +57,7 @@ Available structures:
 | nw6x5     | 24 MB   | 3.2E+6 moves/s |
 | nw4x6     | 256 MB  | 2.3E+6 moves/s |
 | nw5x6     | 320 MB  | 1.8E+6 moves/s |
+| nw8x6     | 512 MB  |                |
 
 ### Train model
 
@@ -66,9 +67,10 @@ Available structures:
 Parameters:
  + **-a [Rate]** - The learning rate (default: 1.0)
  + **-l [Lambda]** - The trace decay parameter (default: 0.5)
- + **-i [Games]** - Number of training games * 100k (default: 1)
+ + **-i [Games]** - Number of training games * 1000 (default: 1)
  + **-r** - Enable reading from a binary file
  + **-w** - Enable writing to a binary file
+ + **-t** - Enable restart strategy
  
 ### Run agent
 
