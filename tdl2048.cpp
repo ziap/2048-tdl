@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     bool write = false;
     bool restart = false;
     bool history = false;
-    while ((c = getopt(argc, argv, "a:l:i:h:rwt")) != -1) switch (c) {
+    while ((c = getopt(argc, argv, "a:l:i:hrwt")) != -1) switch (c) {
     case 'a':
         alpha = atof(optarg);
         break;
