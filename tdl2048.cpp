@@ -20,7 +20,8 @@ int main(int argc, char* argv[]) {
     bool read = false;
     bool write = false;
     bool restart = false;
-    while ((c = getopt(argc, argv, "a:l:i:rwt")) != -1) switch (c) {
+    bool history = false;
+    while ((c = getopt(argc, argv, "a:l:i:h:rwt")) != -1) switch (c) {
     case 'a':
         alpha = atof(optarg);
         break;
@@ -39,8 +40,11 @@ int main(int argc, char* argv[]) {
     case 't':
         restart = true;
         break;
+    case 'h':
+        history = true;
+        break;
     }
-    Learning<STRUCTURE> tdl(alpha, lambda, 1000, restart);
+    Learning<STRUCTURE> tdl(alpha, lambda, 1000, restart, history);
     long long seed = RandomSeed();
     srand(seed);
 

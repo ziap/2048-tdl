@@ -5,6 +5,7 @@
 #include <queue>
 #include <utility>
 #include <unordered_map>
+#include <fstream>
 
 #ifndef ENABLE_TC
     #define ENABLE_TC true
@@ -24,6 +25,8 @@ private:
 
     bool restart = false;
 
+    std::ofstream out;
+
     std::vector<int> scores, max_tile;
 
 public:
@@ -31,11 +34,16 @@ public:
     std::queue<std::pair<board_t, int>> starts;
 
     float rate = 0.1f;
-    Learning(float a = 1.0f, float l = 0.0f, int u = 1000, bool r = false) {
+    Learning(float a = 1.0f, float l = 0.0f, int u = 1000, bool r = false, bool h = false) {
         rate = a / (8 * this->length);
         lambda = l;
         interval = u;
         restart = r;
+        if (h) {
+            out.open("history.csv");
+            out << "game,mean,max,32768,16384,8192,4096,2048\n";
+            out << "0,0,0,0%,0%,0%,0%,0%\n";
+        }
     }
 
     std::pair<board_t, float> SelectBestMove(board_t b) {
@@ -71,16 +79,22 @@ public:
             float mean = float(sum) / float(interval);
             std::cout << n << "\tmean = " << mean;
             std::cout << "\tmax = " << max;
+            if (out.is_open()) out << n << "," << mean << "," << max;
             std::cout << '\n';
             float accu = 0.0f;
             for (int i = 0xf; i > 0; i--) {
                 if (stat[i]) {
                     accu += float(stat[i]);
                     std::cout << '\t' << (1 << i) << '\t' << accu * 0.1f << "%\t" << float(stat[i]) * 0.1f << "%\n";
+                    if (out.is_open() && i > 10) out << "," << accu * 0.1f << "%";
+                }
+                else {
+                    if (out.is_open() && i > 10) out << ",0%";
                 }
             }
             scores.clear();
             max_tile.clear();
+            if (out.is_open()) out << '\n';
         }
     }
 
