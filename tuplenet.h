@@ -25,7 +25,6 @@ struct Indexer<T, Targs...> {
 
 template <int... pattern>
 class Pattern {
-   private:
    public:
     // Length of the pattern
     static constexpr int length = sizeof...(pattern);
@@ -33,11 +32,22 @@ class Pattern {
    private:
     static constexpr int patt[length] = {pattern...};
 
+    static board_t Index(board_t b) {
+#if defined(__x86_64__) && defined(__BMI2__)
+        return __builtin_ia32_pext_di(b, Indexer<pattern...>::mask);
+    }
+#else
+        board_t index = 0;
+        for (int i = 0; i < length; i++) { index = (index << 4) | Tile(b, patt[i]); }
+        return index;
+    }
+#endif
+
    public:
     static float Estimate(board_t b, float* w) {
         float value = 0;
         for (int i = 0; i < 8; i++) {
-            value += w[__builtin_ia32_pext_di(b, Indexer<pattern...>::mask)];
+            value += w[Index(b)];
             if (i & 1) b = Flip(b);
             else
                 b = Transpose(b);
@@ -48,7 +58,7 @@ class Pattern {
     static float Update(board_t b, float u, float* w, board_t n) {
         float value = 0;
         for (int i = 0; i < 8; i++) {
-            board_t index = __builtin_ia32_pext_di(b, Indexer<pattern...>::mask);
+            board_t index = Index(b);
             float alpha = 1;
 #ifdef USE_COHERENCE
             float& error = w[index + n];

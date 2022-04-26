@@ -7,10 +7,10 @@
 #include <random>
 
 // Store the board in a 64-bit bitboard
-typedef unsigned long long board_t;
+using board_t = unsigned long long;
 
 // Each row is 16-bit
-typedef unsigned short row_t;
+using row_t = unsigned short;
 
 // Extract 4-bit tile
 #define Tile(b, x) ((b >> ((0xf - x) << 2)) & 0xf)
