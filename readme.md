@@ -57,7 +57,7 @@ Available structures:
 | nw6x5     | 24 MB   | 3.2E+6 moves/s |
 | nw4x6     | 256 MB  | 2.3E+6 moves/s |
 | nw5x6     | 320 MB  | 1.8E+6 moves/s |
-| nw8x6     | 512 MB  |                |
+| nw8x6     | 512 MB  | 1.2E+6 moves/s |
 
 ### Train model
 
