@@ -1,17 +1,16 @@
 #ifndef SEARCH_H
 #define SEARCH_H
-#include "tuplenet.h"
-#include "transposition.h"
-
+#include <chrono>
 #include <functional>
 #include <thread>
-#include <chrono>
+
+#include "transposition.h"
+#include "tuplenet.h"
 
 // The search algorithm
 template <class T>
 class Search : public T {
-private:
-
+   private:
     static TranspositionTable transposition;
     // Max node of expectimax tree search
     float ExpectimaxMove(board_t b, int depth) {
@@ -53,7 +52,7 @@ private:
             if (value > best) {
                 best = value;
                 dir = i;
-            } 
+            }
         }
         return dir;
     }
@@ -62,28 +61,26 @@ private:
         bool stop = false;
 
         int dir = -1;
-        std::thread([&]{
+        std::thread([&] {
             std::this_thread::sleep_for(std::chrono::milliseconds(time));
             stop = true;
         }).detach();
-        for (int depth = min_depth; !stop; depth++) {
-            dir = SuggestMove(b, depth);
-        }
+        for (int depth = min_depth; !stop; depth++) { dir = SuggestMove(b, depth); }
         return dir;
     }
-public:
 
+   public:
     int min_depth = 0;
 
     int search_time = 0;
-    
+
     int operator()(board_t b) {
         if (!search_time) return SuggestMove(b, min_depth);
         return SuggestMoveIterative(b, search_time);
     }
 };
 
-template<class T>
+template <class T>
 TranspositionTable Search<T>::transposition;
 
 #endif

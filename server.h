@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
 #include <cstring>
-#include <thread>
 #include <functional>
+#include <thread>
 
 // Server related stuffs
 void RunAgent(int client_socket) {
@@ -48,8 +49,7 @@ void RunServer(int server_port) {
         exit(EXIT_FAILURE);
     }
     int enable = 1;
-    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &enable,
-                    sizeof(enable)) < 0) {
+    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) < 0) {
         perror("In setsockopt");
         exit(EXIT_FAILURE);
     }
@@ -74,10 +74,9 @@ void RunServer(int server_port) {
     while (true) {
         const int addrlen = sizeof(address);
         int client_socket;
-        if ((client_socket = accept(server_socket, (struct sockaddr*)&address,
-                                    (socklen_t*)&addrlen)) < 0) {
-        perror("In accept");
-        exit(EXIT_FAILURE);
+        if ((client_socket = accept(server_socket, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0) {
+            perror("In accept");
+            exit(EXIT_FAILURE);
         }
         new std::thread(std::bind(RunAgent, client_socket));
     }

@@ -1,11 +1,11 @@
 #ifndef TRANSPOSITION_H
 #define TRANSPOSITION_H
-#include <random>
+
 #include <chrono>
+#include <random>
 
 class TranspositionTable {
-public:
-
+   public:
     TranspositionTable() {
         std::mt19937 mt(std::chrono::high_resolution_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> distribution(0, 0x3fffff);
@@ -31,8 +31,8 @@ public:
     void CLear() {
         for (int i = 0; i < 0x400000; ++i) entries[i].board = 0;
     }
-private:
 
+   private:
     struct Entry {
         board_t board;
         float score;
@@ -42,7 +42,7 @@ private:
     Entry entries[0x400000];
 
     int zMap[256];
-    
+
     int Hash(board_t x) {
         int value = 0;
         for (int i = 0; i < 16; ++i) {

@@ -1,24 +1,25 @@
+#include <getopt.h>
+
+#include <algorithm>
+#include <cstdlib>
+
 #include "board.h"
 #include "search.h"
 #include "seed.h"
 
-#include <cstdlib>
-#include <algorithm>
-#include <getopt.h>
-
 #ifndef STRUCTURE
-    #define STRUCTURE nw4x6
+#define STRUCTURE nw4x6
 #endif
 
 #ifndef FILE_NAME
-    #define FILE_NAME "weights.bin"
+#define FILE_NAME "weights.bin"
 #endif
 
 bool showboard = false;
 int games = 1, port = 0;
 std::vector<double> speeds;
 std::vector<double> scores;
-int rate[16] = { 0 };
+int rate[16] = {0};
 
 Search<STRUCTURE> search;
 
@@ -44,22 +45,12 @@ int main(int argc, char* argv[]) {
     search.Load(FILE_NAME);
     int c;
     while ((c = getopt(argc, argv, "d:i:t:sS:")) != -1) switch (c) {
-    case 'd':
-        search.min_depth = atoi(optarg);
-        break;
-    case 'i':
-        games = atoi(optarg);
-        break;
-    case 't':
-        search.search_time = atoi(optarg);
-        break;
-    case 's':
-        showboard = true;
-        break;
-    case 'S':
-        port = atoi(optarg);
-        break;
-    }
+            case 'd': search.min_depth = atoi(optarg); break;
+            case 'i': games = atoi(optarg); break;
+            case 't': search.search_time = atoi(optarg); break;
+            case 's': showboard = true; break;
+            case 'S': port = atoi(optarg); break;
+        }
     if (port) {
         RunServer(port);
         return 0;

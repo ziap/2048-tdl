@@ -1,9 +1,9 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include <iostream>
-#include <iomanip>
 #include <chrono>
+#include <iomanip>
+#include <iostream>
 #include <random>
 
 // Store the board in a 64-bit bitboard
@@ -12,7 +12,6 @@ typedef unsigned long long board_t;
 // Each row is 16-bit
 typedef unsigned short row_t;
 
-
 // Extract 4-bit tile
 #define Tile(b, x) ((b >> ((0xf - x) << 2)) & 0xf)
 
@@ -20,7 +19,8 @@ typedef unsigned short row_t;
 #define ReverseRow(row) row_t((row >> 12) | ((row >> 4) & 0x00F0) | ((row << 4) & 0x0F00) | (row << 12))
 
 // Flip board
-#define Flip(b) (((b & 0x000000000000ffffULL) << 48) | ((b & 0x00000000ffff0000ULL) << 16) | ((b & 0x0000ffff00000000ULL) >> 16) | ((b & 0xffff000000000000ULL) >> 48))
+#define Flip(b) \
+    (((b & 0x000000000000ffffULL) << 48) | ((b & 0x00000000ffff0000ULL) << 16) | ((b & 0x0000ffff00000000ULL) >> 16) | ((b & 0xffff000000000000ULL) >> 48))
 
 // Print the board
 void PrintBoard(board_t b) {
@@ -28,7 +28,8 @@ void PrintBoard(board_t b) {
     for (int i = 0; i < 16; i++) {
         int tile = (1 << Tile(b, i)) & -2;
         if (tile) std::cout << '|' << std::setw(6) << tile << ' ';
-        else std::cout << "|       ";
+        else
+            std::cout << "|       ";
         if (i % 4 == 3) std::cout << "|\n+-------+-------+-------+-------+\n";
     }
 }
@@ -43,7 +44,7 @@ board_t EmptyPos(board_t b) {
 // Add a random tile
 board_t AddTile(board_t b) {
     int num_empty = 0;
-    board_t tiles[16] = { 0 };
+    board_t tiles[16] = {0};
     board_t mask = EmptyPos(b);
     while (mask) {
         board_t tile = mask & (~mask + 1);
@@ -103,16 +104,11 @@ board_t Transpose(board_t x) {
 
 // Movement class
 class Move {
-public:
+   public:
     Move() {
         for (unsigned row = 0; row < 65536; ++row) {
             score_table[row] = 0;
-            unsigned line[4] = {
-                (row >> 0) & 0xf,
-                (row >> 4) & 0xf,
-                (row >> 8) & 0xf,
-                (row >> 12) & 0xf
-            };
+            unsigned line[4] = {(row >> 0) & 0xf, (row >> 4) & 0xf, (row >> 8) & 0xf, (row >> 12) & 0xf};
             int farthest = 3;
             bool merged = false;
             for (int i = 3; i >= 0; --i) {
@@ -122,8 +118,8 @@ public:
                     score_table[row] += (1 << line[farthest + 1]);
                     line[i] = 0;
                     merged = true;
-                }
-                else if (farthest == i) --farthest;
+                } else if (farthest == i)
+                    --farthest;
                 else {
                     line[farthest--] = line[i];
                     line[i] = 0;
@@ -136,11 +132,11 @@ public:
     }
     board_t operator()(board_t s, int dir) {
         switch (dir) {
-        case 0: return MoveUp(s);
-        case 1: return MoveRight(s);
-        case 2: return MoveDown(s);
-        case 3: return MoveLeft(s);
-        default: return s;
+            case 0: return MoveUp(s);
+            case 1: return MoveRight(s);
+            case 2: return MoveDown(s);
+            case 3: return MoveLeft(s);
+            default: return s;
         }
     }
     int Score(board_t b, int dir) {
@@ -152,31 +148,24 @@ public:
         }
         return score;
     }
-private:
+
+   private:
     row_t move_table[65536];
     row_t rev_table[65536];
     int score_table[65536];
     board_t MoveLeft(board_t s) {
-        return (board_t(move_table[s & 0xffff]) |
-            (board_t(move_table[(s >> 16) & 0xffff]) << 16) |
-            (board_t(move_table[(s >> 32) & 0xffff]) << 32) |
-            (board_t(move_table[(s >> 48) & 0xffff]) << 48));
+        return (board_t(move_table[s & 0xffff]) | (board_t(move_table[(s >> 16) & 0xffff]) << 16) | (board_t(move_table[(s >> 32) & 0xffff]) << 32) |
+                (board_t(move_table[(s >> 48) & 0xffff]) << 48));
     }
 
     board_t MoveRight(board_t s) {
-        return (board_t(rev_table[s & 0xffff]) |
-            (board_t(rev_table[(s >> 16) & 0xffff]) << 16) |
-            (board_t(rev_table[(s >> 32) & 0xffff]) << 32) |
-            (board_t(rev_table[(s >> 48) & 0xffff]) << 48));
+        return (board_t(rev_table[s & 0xffff]) | (board_t(rev_table[(s >> 16) & 0xffff]) << 16) | (board_t(rev_table[(s >> 32) & 0xffff]) << 32) |
+                (board_t(rev_table[(s >> 48) & 0xffff]) << 48));
     }
 
-    board_t MoveUp(board_t s) {
-        return Transpose(MoveLeft(Transpose(s)));
-    }
+    board_t MoveUp(board_t s) { return Transpose(MoveLeft(Transpose(s))); }
 
-    board_t MoveDown(board_t s) {
-        return Transpose(MoveRight(Transpose(s)));
-    }
+    board_t MoveDown(board_t s) { return Transpose(MoveRight(Transpose(s))); }
 } move;
 
 #endif

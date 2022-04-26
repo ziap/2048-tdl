@@ -1,24 +1,24 @@
 #ifndef LEARNING_H
 #define LEARNING_H
 
+#include <fstream>
 #include <numeric>
 #include <queue>
-#include <utility>
 #include <unordered_map>
-#include <fstream>
+#include <utility>
 
 #ifndef ENABLE_TC
-    #define ENABLE_TC true
+#define ENABLE_TC true
 #endif
 
 #if ENABLE_TC
-    #define USE_COHERENCE
+#define USE_COHERENCE
 #endif
 #include "tuplenet.h"
 
-template<class T>
+template <class T>
 class Learning : public T {
-private:
+   private:
     float lambda = 0.0f;
 
     unsigned interval = 1000;
@@ -29,8 +29,7 @@ private:
 
     std::vector<int> scores, max_tile;
 
-public:
-
+   public:
     std::queue<std::pair<board_t, int>> starts;
 
     float rate = 0.1f;
@@ -74,7 +73,7 @@ public:
                 sum += i;
                 max = std::max(max, i);
             }
-            int stat[16] = { 0 };
+            int stat[16] = {0};
             for (int i : max_tile) stat[i]++;
             float mean = float(sum) / float(interval);
             std::cout << n << "\tmean = " << mean;
@@ -87,8 +86,7 @@ public:
                     accu += float(stat[i]);
                     std::cout << '\t' << (1 << i) << '\t' << accu * 0.1f << "%\t" << float(stat[i]) * 0.1f << "%\n";
                     if (out.is_open() && i > 10) out << "," << accu * 0.1f << "%";
-                }
-                else {
+                } else {
                     if (out.is_open() && i > 10) out << ",0%";
                 }
             }
@@ -115,8 +113,8 @@ public:
                     score += best.second;
                     board = AddTile(best.first);
                     moves++;
-                }
-                else break;
+                } else
+                    break;
             }
             if (restart && path.size() > 10) initboard = AddTile(path[path.size() >> 1].first);
             float exact = 0, error = 0;

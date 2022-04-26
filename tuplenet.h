@@ -1,44 +1,46 @@
 #ifndef TUPLENET_H
 #define TUPLENET_H
 
-#include <fstream>
-#include <string>
 #include <array>
-#include <vector>
+#include <fstream>
 #include <iterator>
+#include <string>
+#include <vector>
+
 #include "board.h"
 
 // The pattern's indexer
-template <int...Targs>
+template <int... Targs>
 struct Indexer;
 
 template <int T>
-struct Indexer<T> { static constexpr board_t mask = 0xFULL << (4 * (15 - T)); };
+struct Indexer<T> {
+    static constexpr board_t mask = 0xFULL << (4 * (15 - T));
+};
 
-template <int T, int...Targs>
-struct Indexer<T, Targs...> { static constexpr board_t mask = (Indexer<T>::mask | Indexer<Targs...>::mask); };
+template <int T, int... Targs>
+struct Indexer<T, Targs...> {
+    static constexpr board_t mask = (Indexer<T>::mask | Indexer<Targs...>::mask);
+};
 
-
-template <int...pattern>
+template <int... pattern>
 class Pattern {
-private:
-
-public:
+   private:
+   public:
     // Length of the pattern
     static constexpr int length = sizeof...(pattern);
 
-private:
+   private:
     static constexpr int patt[length] = {pattern...};
 
-
-public:
-
+   public:
     static float Estimate(board_t b, float* w) {
         float value = 0;
         for (int i = 0; i < 8; i++) {
             value += w[__builtin_ia32_pext_di(b, Indexer<pattern...>::mask)];
             if (i & 1) b = Flip(b);
-            else b = Transpose(b);
+            else
+                b = Transpose(b);
         }
         return value;
     }
@@ -60,18 +62,18 @@ public:
             abs_error += std::abs(u);
 #endif
             if (i & 1) b = Flip(b);
-            else b = Transpose(b);
+            else
+                b = Transpose(b);
         }
         return value;
     }
 };
 
-
-template <class...Features>
+template <class... Features>
 class TupleNetwork {
-private:
-    
-    template <class...Targs> struct Tuples;
+   private:
+    template <class... Targs>
+    struct Tuples;
 
     template <class T>
     struct Tuples<T> {
@@ -82,19 +84,18 @@ private:
         static float Update(board_t b, float u, float* w) { return T::Update(b, u, w, Tuples<Features...>::number_of_weights); }
     };
 
-    template<class T, class...Targs>
+    template <class T, class... Targs>
     struct Tuples<T, Targs...> {
         static constexpr unsigned number_of_weights = Tuples<T>::number_of_weights + Tuples<Targs...>::number_of_weights;
 
-        static float Estimate(board_t b, float* w) {
-            return Tuples<T>::Estimate(b, w) + Tuples<Targs...>::Estimate(b, w + Tuples<T>::number_of_weights);
-        }
+        static float Estimate(board_t b, float* w) { return Tuples<T>::Estimate(b, w) + Tuples<Targs...>::Estimate(b, w + Tuples<T>::number_of_weights); }
 
         static float Update(board_t b, float u, float* w) {
             return Tuples<T>::Update(b, u, w) + Tuples<Targs...>::Update(b, u, w + Tuples<T>::number_of_weights);
         }
     };
-public:
+
+   public:
     // Size of the model
     static constexpr unsigned length = sizeof...(Features);
 
@@ -111,9 +112,7 @@ public:
     float Estimate(board_t b) { return Tuples<Features...>::Estimate(b, weights); }
 
     // Update the value of a board and return the updated value
-    float Update(board_t b, float u) {
-        return Tuples<Features...>::Update(b, u, weights);
-    }
+    float Update(board_t b, float u) { return Tuples<Features...>::Update(b, u, weights); }
 
     // Save the model to a binary file
     void Save(std::string path) {
@@ -142,54 +141,19 @@ public:
 
 // Predefined structures
 
-using nw4x6 =  TupleNetwork<
-    Pattern<0, 1, 2, 3, 4, 5>,
-    Pattern<4, 5, 6, 7, 8, 9>,
-    Pattern<0, 1, 2, 4, 5, 6>,
-    Pattern<4, 5, 6, 8, 9, 10>
->;
+using nw4x6 = TupleNetwork<Pattern<0, 1, 2, 3, 4, 5>, Pattern<4, 5, 6, 7, 8, 9>, Pattern<0, 1, 2, 4, 5, 6>, Pattern<4, 5, 6, 8, 9, 10> >;
 
-using nw5x6 = TupleNetwork<
-    Pattern<0, 1, 2, 3, 4, 5>,
-    Pattern<4, 5, 6, 7, 8, 9>,
-    Pattern<8, 9, 10, 11, 12, 13>,
-    Pattern<0, 1, 2, 4, 5, 6>,
-    Pattern<4, 5, 6, 8, 9, 10>
->;
+using nw5x6 =
+    TupleNetwork<Pattern<0, 1, 2, 3, 4, 5>, Pattern<4, 5, 6, 7, 8, 9>, Pattern<8, 9, 10, 11, 12, 13>, Pattern<0, 1, 2, 4, 5, 6>, Pattern<4, 5, 6, 8, 9, 10> >;
 
-using nw8x6 = TupleNetwork<
-    Pattern<0, 1, 2, 4, 5, 6>,
-    Pattern<1, 2, 5, 6, 9, 13>,
-    Pattern<0, 1, 2, 3, 4, 5>,
-    Pattern<0, 1, 5, 6, 7, 10>,
-    Pattern<0, 1, 2, 5, 9, 10>,
-    Pattern<0, 1, 5, 9, 13, 14>,
-    Pattern<0, 1, 5, 8, 9, 13>,
-    Pattern<0, 1, 2, 4, 6, 10>
->;
+using nw8x6 = TupleNetwork<Pattern<0, 1, 2, 4, 5, 6>, Pattern<1, 2, 5, 6, 9, 13>, Pattern<0, 1, 2, 3, 4, 5>, Pattern<0, 1, 5, 6, 7, 10>,
+                           Pattern<0, 1, 2, 5, 9, 10>, Pattern<0, 1, 5, 9, 13, 14>, Pattern<0, 1, 5, 8, 9, 13>, Pattern<0, 1, 2, 4, 6, 10> >;
 
-using nw5x4 = TupleNetwork<
-    Pattern<0, 1, 2, 3>,
-    Pattern<4, 5, 6, 7>,
-    Pattern<0, 1, 4, 5>,
-    Pattern<1, 2, 5, 6>,
-    Pattern<5, 6, 9, 10>
->;
+using nw5x4 = TupleNetwork<Pattern<0, 1, 2, 3>, Pattern<4, 5, 6, 7>, Pattern<0, 1, 4, 5>, Pattern<1, 2, 5, 6>, Pattern<5, 6, 9, 10> >;
 
-using nw4x5 = TupleNetwork<
-    Pattern<0, 1, 2, 3, 4>,
-    Pattern<4, 5, 6, 7, 8>,
-    Pattern<0, 1, 2, 4, 5>,
-    Pattern<4, 5, 6, 8, 9>
->;
+using nw4x5 = TupleNetwork<Pattern<0, 1, 2, 3, 4>, Pattern<4, 5, 6, 7, 8>, Pattern<0, 1, 2, 4, 5>, Pattern<4, 5, 6, 8, 9> >;
 
-using nw6x5 = TupleNetwork<
-    Pattern<0, 1, 2, 3, 4>,
-    Pattern<4, 5, 6, 7, 8>,
-    Pattern<8, 9, 10, 11, 12>,
-    Pattern<0, 1, 2, 4, 5>,
-    Pattern<4, 5, 6, 8, 9>,
-    Pattern<8, 9, 10, 12, 13>
->;
+using nw6x5 = TupleNetwork<Pattern<0, 1, 2, 3, 4>, Pattern<4, 5, 6, 7, 8>, Pattern<8, 9, 10, 11, 12>, Pattern<0, 1, 2, 4, 5>, Pattern<4, 5, 6, 8, 9>,
+                           Pattern<8, 9, 10, 12, 13> >;
 
 #endif
