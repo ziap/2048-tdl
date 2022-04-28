@@ -22,13 +22,13 @@ int main(int argc, char* argv[]) {
     bool write = false;
     bool restart = false;
     bool history = false;
-    while ((c = getopt(argc, argv, "a:l:i:hrwt")) != -1) switch (c) {
+    while ((c = getopt(argc, argv, "a:l:e:iorh")) != -1) switch (c) {
             case 'a': alpha = atof(optarg); break;
             case 'l': lambda = atof(optarg); break;
-            case 'i': games = atoi(optarg) * 1000; break;
-            case 'r': read = true; break;
-            case 'w': write = true; break;
-            case 't': restart = true; break;
+            case 'e': games = atoi(optarg) * 1000; break;
+            case 'i': read = true; break;
+            case 'o': write = true; break;
+            case 'r': restart = true; break;
             case 'h': history = true; break;
         }
     Learning<STRUCTURE> tdl(alpha, lambda, 1000, restart, history);

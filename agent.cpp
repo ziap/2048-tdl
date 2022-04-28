@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 #include "board.h"
+#include "gui.h"
 #include "search.h"
 #include "seed.h"
 
@@ -16,14 +17,13 @@
 #endif
 
 bool showboard = false;
-int games = 1, port = 0;
+int games = 1;
+bool gui = false;
 std::vector<double> speeds;
 std::vector<double> scores;
 int rate[16] = {0};
 
 Search<STRUCTURE> search;
-
-#include "server.h"
 
 // Print statistics
 void ShowStat(int n) {
@@ -44,15 +44,21 @@ void ShowStat(int n) {
 int main(int argc, char* argv[]) {
     search.Load(FILE_NAME);
     int c;
-    while ((c = getopt(argc, argv, "d:i:t:sS:")) != -1) switch (c) {
+    while ((c = getopt(argc, argv, "d:e:sg")) != -1) switch (c) {
             case 'd': search.min_depth = atoi(optarg); break;
-            case 'i': games = atoi(optarg); break;
-            case 't': search.search_time = atoi(optarg); break;
+            case 'e': games = atoi(optarg); break;
             case 's': showboard = true; break;
-            case 'S': port = atoi(optarg); break;
+            case 'g': gui = true; break;
         }
-    if (port) {
-        RunServer(port);
+    if (gui) {
+        auto fn = [&](std::string s) -> std::string {
+            board_t b = 0;
+            for (int i = 0; i < 4; i++) b = ((b << 16) | std::stoull(webview::json_parse(s, "", i)));
+
+            return std::to_string(search(b));
+        };
+
+        start_webview(fn);
         return 0;
     }
     std::cout << "\x1B[2J\x1B[H";

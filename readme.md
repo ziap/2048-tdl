@@ -115,11 +115,6 @@ average speed: 4477.88 moves per second
         32768   100.00%
 ```
 
-## To Do
-
-- [ ] Generate bindings of the N-Tuple Network to Rust
-- [ ] Create Tauri desktop application
-
 # License
 
 This app is licensed under the MIT license.

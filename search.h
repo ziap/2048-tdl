@@ -57,27 +57,12 @@ class Search : public T {
         return dir;
     }
 
-    int SuggestMoveIterative(board_t b, int time) {
-        bool stop = false;
-
-        int dir = -1;
-        std::thread([&] {
-            std::this_thread::sleep_for(std::chrono::milliseconds(time));
-            stop = true;
-        }).detach();
-        for (int depth = min_depth; !stop; depth++) { dir = SuggestMove(b, depth); }
-        return dir;
-    }
-
    public:
     int min_depth = 0;
 
     int search_time = 0;
 
-    int operator()(board_t b) {
-        if (!search_time) return SuggestMove(b, min_depth);
-        return SuggestMoveIterative(b, search_time);
-    }
+    int operator()(board_t b) { return SuggestMove(b, min_depth); }
 };
 
 template <class T>
