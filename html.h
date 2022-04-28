@@ -1,19 +1,9 @@
 #include <string>
 
-#include "webview/webview.h"
-
 #ifndef GUI_H
 #define GUI_H
 
-void start_webview(webview::webview::sync_binding_t fn) {
-    webview::webview w;
-
-    w.bind("AIMove", fn); 
-
-    w.set_size(1024, 768, WEBVIEW_HINT_NONE);
-    w.set_size(800, 600, WEBVIEW_HINT_MIN);
-    w.set_title("2048 Agent");
-    w.set_html(R"(
+const char* html = R"(
 <!DOCTYPE html>
 <html>
 
@@ -1919,7 +1909,7 @@ void start_webview(webview::webview::sync_binding_t fn) {
                     game.move(result);
                     if (game.over) working = false;
                     else step();
-                })
+                });
             }
 
             document.getElementsByClassName("toggle-ai")[0].addEventListener("click", function() {
@@ -1932,8 +1922,6 @@ void start_webview(webview::webview::sync_binding_t fn) {
 </body>
 
 </html>
-    )");
-    w.run();
-};
+)";
 
 #endif

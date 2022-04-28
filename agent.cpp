@@ -4,9 +4,10 @@
 #include <cstdlib>
 
 #include "board.h"
-#include "gui.h"
+#include "html.h"
 #include "search.h"
 #include "seed.h"
+#include "webview/webview.h"
 
 #ifndef STRUCTURE
 #define STRUCTURE nw4x6
@@ -57,8 +58,15 @@ int main(int argc, char* argv[]) {
 
             return std::to_string(search(b));
         };
+        webview::webview w;
 
-        start_webview(fn);
+        w.bind("AIMove", fn);
+
+        w.set_size(1024, 768, WEBVIEW_HINT_NONE);
+        w.set_size(800, 600, WEBVIEW_HINT_MIN);
+        w.set_title("2048 Agent");
+        w.set_html(html);
+        w.run();
         return 0;
     }
     std::cout << "\x1B[2J\x1B[H";

@@ -20,13 +20,13 @@ You can achieve similar results with:
 make STRUCTURE=nw8x6
 
 # Train the network with 400000 games, α = 1.0, λ = 0.5 and restart strategy
-./train -i 400 -a 1.0 -l 0.5 -w -t
+./train -e 400 -a 1.0 -l 0.5 -o -t
 
 # Run the agent for 10000 games with no search
-./agent -i 10000
+./agent -e 10000
 
 # Run the agent for 300 games with 5 ply search
-./agent -i 300 -d 2
+./agent -e 300 -d 2
 ```
 
 ## Optimizations
@@ -72,10 +72,10 @@ Parameters:
 
 - **-a [Rate]** - The learning rate (default: 1.0)
 - **-l [Lambda]** - The trace decay parameter (default: 0.5)
-- **-i [Games]** - Number of training games \* 1000 (default: 1)
-- **-r** - Enable reading from a binary file
-- **-w** - Enable writing to a binary file
-- **-t** - Enable restart strategy
+- **-e [Episodes]** - Number of training games \* 1000 (default: 1)
+- **-i** - Enable reading from a binary file
+- **-o** - Enable writing to a binary file
+- **-r** - Enable restart strategy
 
 ### Run agent
 
@@ -86,8 +86,9 @@ Parameters:
 Parameters:
 
 - **-d [Depth]** - The search depth (default: 0)
-- **-i [Iterations]** - Number of games to play (default: 1)
+- **-e [Iterations]** - Number of games to play (default: 1)
 - **-s** - Show the board when the AI is running **AI speed will be capped down to the text rendering speed of your terminal**
+- **-g** - Enable GUI interface powered by [webview](https://github.com/webview/webview)
 
 Example:
 
@@ -114,6 +115,13 @@ average score: 626268.00
 average speed: 4477.88 moves per second
         32768   100.00%
 ```
+
+## Todo
+
+- [ ] Add some handcrafted features
+- [ ] Add multi-threading
+- [ ] Refactor the code with a better C++ style
+- [ ] Add more settings to the GUI application
 
 # License
 
