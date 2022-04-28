@@ -11,7 +11,7 @@
 
 // The pattern's indexer
 template <int... Targs>
-struct Indexer;
+struct Indexer {};
 
 template <int T>
 struct Indexer<T> {

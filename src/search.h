@@ -14,8 +14,8 @@ class Search : public T {
     static TranspositionTable transposition;
     // Max node of expectimax tree search
     float ExpectimaxMove(board_t b, int depth) {
-        float max = 0;
-        for (int i = 0; i < 4; i++) {
+        auto max = 0.0f;
+        for (auto i = 0; i < 4; i++) {
             board_t moved = move(b, i);
             if (moved == b) continue;
             max = std::max(max, (float)move.Score(b, i) + ExpectimaxSpawn(moved, depth));
@@ -25,14 +25,14 @@ class Search : public T {
 
     // Chance node of expectimax tree search
     float ExpectimaxSpawn(board_t b, int depth) {
-        float expect = 0;
+        auto expect = 0.0f;
         if (depth <= 0) return this->Estimate(b);
         if (transposition.Lookup(b, depth, &expect)) return expect;
         expect = 0;
         board_t mask = EmptyPos(b);
-        int empty = int((mask * 0x1111111111111111ull) >> 60);
+        auto empty = int((mask * 0x1111111111111111ull) >> 60);
         while (mask) {
-            board_t tile = mask & (~mask + 1);
+            auto tile = mask & (~mask + 1);
             expect += ExpectimaxMove(b | tile, depth - 1) * 0.9;
             expect += ExpectimaxMove(b | (tile << 1), depth - 1) * 0.1;
             mask ^= tile;
@@ -43,12 +43,12 @@ class Search : public T {
     };
 
     int SuggestMove(board_t b, int depth) {
-        int dir = -1;
-        float best = 0;
-        for (int i = 0; i < 4; i++) {
+        auto dir = -1;
+        auto best = 0.0f;
+        for (auto i = 0; i < 4; i++) {
             board_t new_board = move(b, i);
             if (new_board == b) continue;
-            float value = ExpectimaxSpawn(new_board, min_depth);
+            auto value = ExpectimaxSpawn(new_board, min_depth);
             if (value > best) {
                 best = value;
                 dir = i;

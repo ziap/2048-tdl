@@ -46,13 +46,13 @@ class Learning : public T {
     }
 
     std::pair<board_t, float> SelectBestMove(board_t b) {
-        std::pair<board_t, float> best = {0, -1};
-        float best_value = 0;
+        auto best = std::make_pair(0ull, -1.0f);
+        auto best_value = 0.0f;
         for (int i = 0; i < 4; i++) {
-            board_t after = move(b, i);
+            auto after = move(b, i);
             if (after != b) {
-                float reward = move.Score(b, i);
-                float value = reward + this->Estimate(after);
+                auto reward = (float)move.Score(b, i);
+                auto value = reward + this->Estimate(after);
                 if (best.second == -1 || value > best_value) {
                     best = {after, reward};
                     best_value = value;
@@ -67,20 +67,20 @@ class Learning : public T {
         scores.push_back(score);
         max_tile.push_back(MaxRank(b));
         if (n % interval == 0) {
-            int sum = 0;
-            int max = 0;
+            auto sum = 0;
+            auto max = 0;
             for (int i : scores) {
                 sum += i;
                 max = std::max(max, i);
             }
-            int stat[16] = {0};
+            auto stat = std::array<int, 16>{};
             for (int i : max_tile) stat[i]++;
-            float mean = float(sum) / float(interval);
+            auto mean = float(sum) / float(interval);
             std::cout << n << "\tmean = " << mean;
             std::cout << "\tmax = " << max;
             if (out.is_open()) out << n << "," << mean << "," << max;
             std::cout << '\n';
-            float accu = 0.0f;
+            auto accu = 0.0f;
             for (int i = 0xf; i > 0; i--) {
                 if (stat[i]) {
                     accu += float(stat[i]);
@@ -98,16 +98,16 @@ class Learning : public T {
 
     // Play a game and update the network
     unsigned LearnEpisode(int n) {
-        unsigned moves = 0;
-        board_t initboard = AddTile(AddTile(0));
-        bool print_stats = true;
+        auto moves = 0u;
+        auto initboard = AddTile(AddTile(0));
+        auto print_stats = true;
         while (initboard) {
-            board_t board = initboard;
+            auto board = initboard;
             initboard = 0;
             std::vector<std::pair<board_t, float>> path;
-            int score = 0;
+            auto score = 0;
             for (;;) {
-                std::pair<board_t, float> best = SelectBestMove(board);
+                auto best = SelectBestMove(board);
                 if (best.second != -1) {
                     path.push_back(best);
                     score += best.second;
@@ -117,7 +117,8 @@ class Learning : public T {
                     break;
             }
             if (restart && path.size() > 10) initboard = AddTile(path[path.size() >> 1].first);
-            float exact = 0, error = 0;
+            auto exact = 0.0f;
+            auto error = 0.0f;
             for (; path.size(); path.pop_back()) {
                 std::pair<board_t, float> move = path.back();
                 error = exact - this->Estimate(move.first);

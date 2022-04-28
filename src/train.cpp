@@ -14,14 +14,14 @@
 #endif
 
 int main(int argc, char* argv[]) {
-    int c;
-    float alpha = 1.0;
-    float lambda = 0.5;
-    unsigned games = 1000;
-    bool read = false;
-    bool write = false;
-    bool restart = false;
-    bool history = false;
+    auto c = -1;
+    auto alpha = 1.0f;
+    auto lambda = 0.5f;
+    auto games = 1000u;
+    auto read = false;
+    auto write = false;
+    auto restart = false;
+    auto history = false;
     while ((c = getopt(argc, argv, "a:l:e:iorh")) != -1) switch (c) {
             case 'a': alpha = atof(optarg); break;
             case 'l': lambda = atof(optarg); break;
@@ -32,16 +32,16 @@ int main(int argc, char* argv[]) {
             case 'h': history = true; break;
         }
     Learning<STRUCTURE> tdl(alpha, lambda, 1000, restart, history);
-    long long seed = RandomSeed();
+    auto seed = RandomSeed();
     srand(seed);
 
     if (read) tdl.Load(FILE_NAME);
 
     std::cout << "Number of weights: " << tdl.weights_len << '\n';
     std::cout << "seed = " << seed << "\t learning rate = " << alpha << '\n';
-    unsigned long long moves = 0;
+    auto moves = 0ull;
     auto start = std::chrono::high_resolution_clock::now();
-    for (int n = 1; n <= games; n++) moves += tdl.LearnEpisode(n);
+    for (auto n = 1; n <= games; n++) moves += tdl.LearnEpisode(n);
 
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);

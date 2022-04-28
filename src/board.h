@@ -26,7 +26,7 @@ using row_t = unsigned short;
 void PrintBoard(board_t b) {
     std::cout << "+-------+-------+-------+-------+\n";
     for (int i = 0; i < 16; i++) {
-        int tile = (1 << Tile(b, i)) & -2;
+        auto tile = (1 << Tile(b, i)) & -2;
         if (tile) std::cout << '|' << std::setw(6) << tile << ' ';
         else
             std::cout << "|       ";
@@ -43,11 +43,11 @@ board_t EmptyPos(board_t b) {
 
 // Add a random tile
 board_t AddTile(board_t b) {
-    int num_empty = 0;
-    board_t tiles[16] = {0};
-    board_t mask = EmptyPos(b);
+    auto num_empty = 0;
+    auto tiles = std::array<board_t, 16>{};
+    auto mask = EmptyPos(b);
     while (mask) {
-        board_t tile = mask & (~mask + 1);
+        auto tile = mask & (~mask + 1);
         tiles[num_empty++] = tile;
         mask ^= tile;
     }
@@ -56,7 +56,7 @@ board_t AddTile(board_t b) {
 
 // Highest tile
 int MaxRank(board_t b) {
-    int max = 0;
+    auto max = 0;
     while (b) {
         max = std::max(max, int(b & 0xf));
         b >>= 4;
@@ -64,38 +64,9 @@ int MaxRank(board_t b) {
     return max;
 }
 
-// Sum all distinct tiles
-board_t Sum(board_t b) {
-    unsigned short mask = 0;
-    while (b) {
-        mask |= (1 << (b & 0xf));
-        b >>= 4;
-    }
-    board_t count = 0;
-    while (mask) {
-        board_t tile = mask & (~mask + 1);
-        count += tile;
-        mask ^= tile;
-    }
-    return count;
-}
-
-// Count distinct tiles
-int CountDistinct(board_t b) {
-    unsigned short mask = 0;
-    while (b) {
-        mask |= (1 << (b & 0xf));
-        b >>= 4;
-    }
-    int count = 0;
-    for (mask >>= 1; mask; mask &= (mask - 1)) count++;
-    return count;
-}
-
 // Swap row and col
 board_t Transpose(board_t x) {
-    board_t t;
-    t = (x ^ (x >> 12)) & 0x0000f0f00000f0f0ull;
+    auto t = (x ^ (x >> 12)) & 0x0000f0f00000f0f0ull;
     x ^= t ^ (t << 12);
     t = (x ^ (x >> 24)) & 0x00000000ff00ff00ull;
     x ^= t ^ (t << 24);
@@ -106,12 +77,12 @@ board_t Transpose(board_t x) {
 class Move {
    public:
     Move() {
-        for (unsigned row = 0; row < 65536; ++row) {
+        for (auto row = 0; row < 65536; ++row) {
             score_table[row] = 0;
-            unsigned line[4] = {(row >> 0) & 0xf, (row >> 4) & 0xf, (row >> 8) & 0xf, (row >> 12) & 0xf};
-            int farthest = 3;
-            bool merged = false;
-            for (int i = 3; i >= 0; --i) {
+            auto line = std::array{(row >> 0) & 0xf, (row >> 4) & 0xf, (row >> 8) & 0xf, (row >> 12) & 0xf};
+            auto farthest = 3;
+            auto merged = false;
+            for (auto i = 3; i >= 0; --i) {
                 if (!line[i]) continue;
                 if (!merged && farthest < 3 && line[i] == line[farthest + 1]) {
                     line[farthest + 1] = (line[farthest + 1] + 1) & 0xf;
@@ -140,7 +111,7 @@ class Move {
         }
     }
     int Score(board_t b, int dir) {
-        int score = 0;
+        auto score = 0;
         if (!(dir & 1)) b = Transpose(b);
         while (b) {
             score += score_table[b & 0xffff];

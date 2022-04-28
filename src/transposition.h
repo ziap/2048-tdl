@@ -9,7 +9,7 @@ class TranspositionTable {
     TranspositionTable() {
         std::mt19937 mt(std::chrono::high_resolution_clock::now().time_since_epoch().count());
         std::uniform_int_distribution<int> distribution(0, 0x3fffff);
-        for (int i = 0; i < 256; i++) zMap[i] = distribution(mt);
+        for (auto i = 0; i < 256; i++) zMap[i] = distribution(mt);
     }
 
     bool Lookup(board_t board, int depth, float* score) {
@@ -29,7 +29,7 @@ class TranspositionTable {
     }
 
     void CLear() {
-        for (int i = 0; i < 0x400000; ++i) entries[i].board = 0;
+        for (auto i = 0; i < 0x400000; ++i) entries[i].board = 0;
     }
 
    private:
@@ -44,8 +44,8 @@ class TranspositionTable {
     int zMap[256];
 
     int Hash(board_t x) {
-        int value = 0;
-        for (int i = 0; i < 16; ++i) {
+        auto value = 0;
+        for (auto i = 0; i < 16; ++i) {
             value ^= zMap[(i << 4) | (x & 0xf)];
             x >>= 4;
         }

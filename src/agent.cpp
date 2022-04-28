@@ -34,8 +34,8 @@ void ShowStat(int n) {
     std::cout << "\n\033[Kaverage score: " << std::accumulate(scores.begin(), scores.end(), 0.0) / double(n) << '\n';
     std::cout << "\033[Kmaximum score: " << *std::max_element(scores.begin(), scores.end()) << '\n';
     std::cout << "\033[Kaverage speed: " << std::accumulate(speeds.begin(), speeds.end(), 0.0) / (double)n << " moves per second\n";
-    int accu = 0;
-    for (int i = 15; i > 0; i--) {
+    auto accu = 0;
+    for (auto i = 15; i > 0; i--) {
         if (!rate[i]) continue;
         accu += rate[i];
         std::cout << "\033[K\t" << (1 << i) << '\t' << accu * 100.f / float(n) << "%\n";
@@ -44,7 +44,7 @@ void ShowStat(int n) {
 
 int main(int argc, char* argv[]) {
     search.Load(FILE_NAME);
-    int c;
+    auto c = -1;
     while ((c = getopt(argc, argv, "d:e:sg")) != -1) switch (c) {
             case 'd': search.min_depth = atoi(optarg); break;
             case 'e': games = atoi(optarg); break;
@@ -70,23 +70,23 @@ int main(int argc, char* argv[]) {
         return 0;
     }
     std::cout << "\x1B[2J\x1B[H";
-    long long seed = RandomSeed();
+    auto seed = RandomSeed();
     srand(seed);
     std::cout << "seed = " << seed << '\t' << "depth = " << search.min_depth << '\n';
     std::cout << "\033[s";
 
     // Play N games
-    for (int n = 1; n <= games; n++) {
-        int moves = 0;
+    for (auto n = 1; n <= games; n++) {
+        auto moves = 0;
         auto start = std::chrono::high_resolution_clock::now();
         board_t board = AddTile(AddTile(0));
-        int score = 0;
+        auto score = 0;
         for (;;) {
             if (showboard) {
                 std::cout << "\033[u";
                 PrintBoard(board);
             }
-            int dir = search(board);
+            auto dir = search(board);
             if (dir < 0) break;
             moves++;
             score += move.Score(board, dir);
