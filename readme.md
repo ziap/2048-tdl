@@ -10,8 +10,8 @@ A 2048 agent with N-Tuple Network trained using Backward Temporal Coherence Lear
 
 | Depth | Games | Scores | % 32768 | % 16384 | % 8192 | Moves/s |
 | ----- | ----- | ------ | ------- | ------- | ------ | ------- |
-| 1 ply | 10000 | 254275 | 7.99    | 54.29   | 84.47  | 1206240 |
-| 5 ply | 300   | 420477 | 37.33   | 83.67   | 96.67  | 6744    |
+| 1 ply | 10000 | 254275 | 7.99    | 54.29   | 84.47  | 1405922 |
+| 5 ply | 300   | 420477 | 37.33   | 83.67   | 96.67  | 8246    |
 
 You can achieve similar results with:
 
@@ -29,6 +29,22 @@ make STRUCTURE=nw8x6
 ./agent -e 300 -d 2
 ```
 
+**Note:** Because of overhead, using N cores doesn't make the program N times faster, especially on weaker CPUs like the one in the benchmark.
+So it's generally not recommended to use all the cores available.
+For example on the CPU used in the benchmark (4 cores, 8 threads), the speed of using different number of threads is:
+
+| Depth | Threads | Speedup   |
+| ----- | ------- | --------- |
+| 1 ply | 1       | +0%       |
+| 1 ply | 2       | +16%      |
+| 1 ply | 4       | **+19%**  |
+| 1 ply | 8       | +10%      |
+| - - - | - - -   | - - -     |
+| 5 ply | 1       | +0%       |
+| 5 ply | 2       | +69%      |
+| 5 ply | 4       | **+187%** |
+| 5 ply | 8       | +156%     |
+
 ## Optimizations
 
 To achieve high speed and fast learning, both the agent and training code are heavily optimized:
@@ -38,6 +54,7 @@ To achieve high speed and fast learning, both the agent and training code are he
 - Transposistion table with Zobrist Hash.
 - Bit optimizations.
 - Efficient N-Tuple Network implementation with static structure.
+- Multi-threaded training and evaluation.
 
 ## Usage
 
@@ -60,12 +77,12 @@ Available structures:
 | nw6x5     | 24 MB   | 3.2E+6 moves/s |
 | nw4x6     | 256 MB  | 2.3E+6 moves/s |
 | nw5x6     | 320 MB  | 1.8E+6 moves/s |
-| nw8x6     | 512 MB  | 1.2E+6 moves/s |
+| nw8x6     | 512 MB  | 1.4E+6 moves/s |
 
 ### Train model
 
 ```
-./train
+./train [Options]
 ```
 
 Parameters:
@@ -76,11 +93,12 @@ Parameters:
 - **-i** - Enable reading from a binary file
 - **-o** - Enable writing to a binary file
 - **-r** - Enable restart strategy
+- **-t [Threads]** - Enable threading (default: 1)
 
 ### Run agent
 
 ```sh
-./agent
+./agent [Options]
 ```
 
 Parameters:
@@ -89,38 +107,23 @@ Parameters:
 - **-e [Iterations]** - Number of games to play (default: 1)
 - **-s** - Show the board when the AI is running **AI speed will be capped down to the text rendering speed of your terminal**
 - **-g** - Enable GUI interface powered by [webview](https://github.com/webview/webview)
+- **-t** - Enable threading (default: 1)
 
 Example:
 
 ```sh
-./agent -d2 -i100 # 5 ply, 100 games
-./agent -d4 -s    # 11 ply, 1 game, show board
+./agent -d2 -i100 -t # 5 ply, 100 games, multi-threaded
+./agent -d4 -g    # 11 ply, 1 game, enable GUI
 ```
 
-A game with show board option enabled:
+Example game with the GUI:
 
-```
-seed = 2081095579       depth = 2
-+-------+-------+-------+-------+
-| 32768 |  1024 |     4 |     2 |
-+-------+-------+-------+-------+
-|  2048 |   256 |    16 |     4 |
-+-------+-------+-------+-------+
-|  4096 |   128 |    32 |     2 |
-+-------+-------+-------+-------+
-|  8192 |    64 |     2 |     8 |
-+-------+-------+-------+-------+
-progress: 1/1
-average score: 626268.00
-average speed: 4477.88 moves per second
-        32768   100.00%
-```
+![](gui.png)
 
 ## Todo
 
 - [ ] Add some handcrafted features
-- [ ] Add multi-threading
-- [ ] Refactor the code with a better C++ style
+- [ ] Refactor the code for better thread efficiency
 - [ ] Add more settings to the GUI application
 
 # License

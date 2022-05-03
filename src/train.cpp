@@ -1,6 +1,9 @@
 #include <getopt.h>
 
 #include <cstdlib>
+#include <thread>
+#include <vector>
+#include <future>
 
 #include "learning.h"
 #include "seed.h"
@@ -21,17 +24,17 @@ int main(int argc, char* argv[]) {
     auto read = false;
     auto write = false;
     auto restart = false;
-    auto history = false;
-    while ((c = getopt(argc, argv, "a:l:e:iorh")) != -1) switch (c) {
+    auto thread_count = 1u;
+    while ((c = getopt(argc, argv, "a:l:e:iort:")) != -1) switch (c) {
             case 'a': alpha = atof(optarg); break;
             case 'l': lambda = atof(optarg); break;
             case 'e': games = atoi(optarg) * 1000; break;
             case 'i': read = true; break;
             case 'o': write = true; break;
             case 'r': restart = true; break;
-            case 'h': history = true; break;
+            case 't': thread_count = atoi(optarg); break;
         }
-    Learning<STRUCTURE> tdl(alpha, lambda, 1000, restart, history);
+    Learning<STRUCTURE> tdl(alpha, lambda, restart);
     auto seed = RandomSeed();
     srand(seed);
 
@@ -39,15 +42,16 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Number of weights: " << tdl.weights_len << '\n';
     std::cout << "seed = " << seed << "\t learning rate = " << alpha << '\n';
-    auto moves = 0ull;
-    auto start = std::chrono::high_resolution_clock::now();
-    for (auto n = 1; n <= games; n++) moves += tdl.LearnEpisode(n);
 
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    auto duration_h = std::chrono::duration_cast<std::chrono::hours>(end - start);
-    std::cout << "training done after " << duration_h.count() << " hours\n";
-    std::cout << "speed = " << (float)moves * 1e9 / (float)duration.count() << " moves per second\n";
+    std::vector<std::future<Stat>> futures;
 
-    if (write) tdl.Save(FILE_NAME);
+    auto LearnFunctor = [&tdl](unsigned n, unsigned thread) -> Stat { return tdl.LearnEpisode(n, thread); };
+
+    for (auto i = 0; i < thread_count - 1; i++) futures.push_back(std::async(std::launch::async, LearnFunctor, games / thread_count, i));
+
+    auto result = tdl.LearnEpisode(games - games / thread_count * (thread_count - 1), thread_count - 1);
+
+    for (auto& f : futures) { result = result.Join(f.get()); }
+
+    result.Print();
 }
