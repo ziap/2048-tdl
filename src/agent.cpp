@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <future>
 #include <thread>
 
 #include "board.h"
@@ -86,6 +87,7 @@ int main(int argc, char* argv[]) {
         w.run();
 #else
         std::cout << "GUI not supported\n";
+        return 1;
 #endif
         return 0;
     }

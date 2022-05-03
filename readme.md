@@ -45,7 +45,14 @@ For example on the CPU used in the benchmark (4 cores, 8 threads), the speed of 
 | 5 ply | 4       | **+187%** |
 | 5 ply | 8       | +156%     |
 
-## Optimizations
+## Features
+
+- Backward TD(λ) learning.
+- N-Tuple Network with configurable structure.
+- Optional temporal coherence learning and restart strategy.
+- Expectimax search with configurable depth.
+- [Webview](https://github.com/webview/webview) based GUI application.
+- Multi-threaded training and evaluation.
 
 To achieve high speed and fast learning, both the agent and training code are heavily optimized:
 
@@ -54,7 +61,6 @@ To achieve high speed and fast learning, both the agent and training code are he
 - Transposistion table with Zobrist Hash.
 - Bit optimizations.
 - Efficient N-Tuple Network implementation with static structure.
-- Multi-threaded training and evaluation.
 
 ## Usage
 
@@ -62,11 +68,27 @@ Download and unzip the trained model (8x6tuple network) [here](../../releases/la
 
 ### Build
 
-You can specify a N-tuple network structure when building the AI. The default structure is 4x6 tuples.
+GCC and GNU Make are required to build the program.
+To build the GUI, you also need the GTK+ development libraries and webkit2gtk-4.0.
+
+Currently, the makefile only supports Linux. Building the program on other platforms should be possible, but not tested.
+Cross platform build script is planned.
+
+Building the program on Google Colaboratory is also supported if you disable the GUI.
+
+Make sure to clone the repository recursively or initalize the submodules. (only required if you are using the GUI)
+
+#### Build steps
 
 ```sh
-make STRUCTURE=[Structure]
+make [Options]
 ```
+
+Parameters:
+
+- **STRUCTURE**: The tuple network structure. (default: nw4x6)
+- **ENABLE_TC**: Enable temporal coherence learning. (default: true)
+- **ENABLE_GUI**: Enable the GUI. (default: true)
 
 Available structures:
 
@@ -106,7 +128,7 @@ Parameters:
 - **-d [Depth]** - The search depth (default: 0)
 - **-e [Iterations]** - Number of games to play (default: 1)
 - **-s** - Show the board when the AI is running **AI speed will be capped down to the text rendering speed of your terminal**
-- **-g** - Enable GUI interface powered by [webview](https://github.com/webview/webview)
+- **-g** - Enable GUI interface, will show an error message and exit if you build the AI without GUI.
 - **-t** - Enable threading (default: 1)
 
 Example:
@@ -123,6 +145,7 @@ Example game with the GUI:
 ## Todo
 
 - [ ] Add some handcrafted features
+- [ ] Add multi stage learning
 - [ ] Refactor the code for better thread efficiency
 - [ ] Add more settings to the GUI application
 
