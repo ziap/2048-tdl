@@ -2,6 +2,7 @@ STRUCTURE?=nw4x6
 ENABLE_TC?=true
 ENABLE_GUI?=true
 CXX?=g++
+STD?=c++17
 
 ifeq ($(ENABLE_GUI), true)
 WEBVIEW_DEPS=`pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0`
@@ -9,7 +10,11 @@ else
 WEBVIEW_DEPS=
 endif
 
-OPTIONS=-DSTRUCTURE=$(STRUCTURE) -DENABLE_TC=$(ENABLE_TC) -DGUI=$(ENABLE_GUI) -O3 -mtune=native -std=c++17 -DFILE_NAME=\"$(STRUCTURE)/weights.bin\" -mbmi2 -pthread
+FLAGS=-DSTRUCTURE=$(STRUCTURE) -DENABLE_TC=$(ENABLE_TC) -DGUI=$(ENABLE_GUI) -std=$(STD) -DFILE_NAME=\"$(STRUCTURE)/weights.bin\" 
+OPTIM=-O3 -march=native -mtune=native -funroll-loops
+FEATS=-mbmi -mbmi2 -mavx -mavx2 -pthread
+
+OPTIONS=$(FLAGS) $(OPTIM) $(FEATS)
 all:
 	$(CXX) src/train.cpp -o train $(OPTIONS)
 	$(CXX) src/agent.cpp $(WEBVIEW_DEPS) -o agent $(OPTIONS)

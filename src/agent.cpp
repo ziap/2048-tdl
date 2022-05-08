@@ -12,7 +12,7 @@
 #include "stat.h"
 
 #ifndef GUI
-#define GUI true
+#define GUI false
 #endif
 
 #if GUI
@@ -34,7 +34,7 @@ Stat PlayNGames(unsigned n, unsigned thread) {
 
     Stat result;
 
-    for (auto i = 1; i <= n; i++) {
+    for (auto i = 1u; i <= n; i++) {
         auto moves = 0.0f;
         auto board = AddTile(AddTile(0));
         auto score = 0.0f;
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
 
     std::vector<std::future<Stat>> futures;
 
-    for (auto i = 0; i < thread_count - 1; i++) futures.push_back(std::async(std::launch::async, PlayNGames, games / thread_count, i));
+    for (auto i = 0u; i < thread_count - 1; i++) futures.push_back(std::async(std::launch::async, PlayNGames, games / thread_count, i));
 
     auto result = PlayNGames(games - games / thread_count * (thread_count - 1), thread_count - 1);
 

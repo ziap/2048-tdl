@@ -40,7 +40,7 @@ class Learning : public T {
     std::pair<board_t, float> SelectBestMove(board_t b) {
         auto best = std::make_pair(0ull, -1.0f);
         auto best_value = 0.0f;
-        for (int i = 0; i < 4; i++) {
+        for (auto i = 0; i < 4; i++) {
             auto after = move(b, i);
             if (after != b) {
                 auto reward = (float)move.Score(b, i);
@@ -58,7 +58,7 @@ class Learning : public T {
     Stat LearnEpisode(unsigned n, unsigned thread) {
         Stat stat;
 
-        for (int i = 1; i <= n; i++) {
+        for (auto i = 1u; i <= n; i++) {
             auto initboard = AddTile(AddTile(0));
             auto print_stats = true;
             auto moves = 0;

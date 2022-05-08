@@ -47,11 +47,14 @@ int main(int argc, char* argv[]) {
 
     auto LearnFunctor = [&tdl](unsigned n, unsigned thread) -> Stat { return tdl.LearnEpisode(n, thread); };
 
-    for (auto i = 0; i < thread_count - 1; i++) futures.push_back(std::async(std::launch::async, LearnFunctor, games / thread_count, i));
+    for (auto i = 0u; i < thread_count - 1; i++) futures.push_back(std::async(std::launch::async, LearnFunctor, games / thread_count, i));
 
     auto result = tdl.LearnEpisode(games - games / thread_count * (thread_count - 1), thread_count - 1);
 
     for (auto& f : futures) { result = result.Join(f.get()); }
 
     result.Print();
+    if (write) {
+        tdl.Save(FILE_NAME);
+    }
 }
