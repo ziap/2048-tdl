@@ -1871,7 +1871,9 @@ const char* html = R"(
             return first.x === second.x && first.y === second.y;
         };
 
-
+        
+        function move(dir) {};
+    
         // Wait till the browser is ready to render the game (avoids glitches)
         window.requestAnimationFrame(function () {
             var game = new GameManager(4, KeyboardInputManager, HTMLActuator, LocalStorageManager);
@@ -1893,16 +1895,21 @@ const char* html = R"(
                 if (!working) return;
                 var state = currentState();
                 
-                AIMove(...state).then(result => {
-                    game.move(result);
-                    if (game.over) working = false;
-                    else step();
-                });
+                AIMove(...state);
+            }
+            
+            var toggler = document.getElementsByClassName("toggle-ai")[0]
+            move = function(dir) {
+                game.move(dir);
+                if (game.over) {
+                    working = false;
+                    toggler.textContent = "Start AI";
+                } else step();
             }
 
-            document.getElementsByClassName("toggle-ai")[0].addEventListener("click", function() {
-                
-                working = !working;
+            toggler.addEventListener("click", function() {
+                working = 1 - working;
+                toggler.textContent = ["Stop AI", "Start AI"][working];
                 if (working) step();
             });
         });

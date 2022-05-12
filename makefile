@@ -11,7 +11,7 @@ WEBVIEW_DEPS=
 endif
 
 FLAGS=-DSTRUCTURE=$(STRUCTURE) -DENABLE_TC=$(ENABLE_TC) -DGUI=$(ENABLE_GUI) -std=$(STD) -DFILE_NAME=\"$(STRUCTURE)/weights.bin\" 
-OPTIM=-O3 -march=native -mtune=native -funroll-loops
+OPTIM=-O3 -march=native -mtune=native
 FEATS=-mbmi -mbmi2 -mavx -mavx2 -pthread
 
 OPTIONS=$(FLAGS) $(OPTIM) $(FEATS)

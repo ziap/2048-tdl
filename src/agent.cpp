@@ -71,20 +71,26 @@ int main(int argc, char* argv[]) {
         }
     if (gui) {
 #if GUI
-        auto fn = [&](std::string s) -> std::string {
+        webview::webview w;
+        std::thread trd;
+        
+        w.bind("AIMove", [&](std::string s) -> std::string {
             board_t b = 0;
             for (int i = 0; i < 4; i++) b = ((b << 16) | std::stoull(webview::json_parse(s, "", i)));
-
-            return std::to_string(search(b));
-        };
-        webview::webview w;
-
-        w.bind("AIMove", fn);
+            if (trd.joinable()) trd.join();
+            trd = std::thread([&](board_t x) {
+                auto dir = search(x);
+                
+                w.eval(std::string("move(") + std::to_string(dir) + ")");      
+            }, b);
+            return "";
+        });
 
         w.set_size(640, 800, WEBVIEW_HINT_FIXED);
         w.set_title("2048 Agent");
         w.set_html(html);
         w.run();
+        if (trd.joinable()) trd.join();
 #else
         std::cout << "GUI not supported\n";
         return 1;
