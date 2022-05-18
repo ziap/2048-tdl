@@ -43,8 +43,6 @@ class network {
   static constexpr math::u64 weight_len =
     tuples<Features...>::number_of_weights;
 
-  
-  
   static float *get_weights() {
     if constexpr (tc) {
       static float *weights = new float[weight_len * 3];

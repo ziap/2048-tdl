@@ -34,8 +34,7 @@
 #define FILE_NAME "nw4x6/weights.bin"
 #endif
 
-extern "C" char _binary_src_gui_html_start;
-extern "C" char _binary_src_gui_html_end;
+extern "C" const char *html;
 
 namespace agent {
 
@@ -88,7 +87,6 @@ inline int main(int argc, char *argv[]) {
     webview::webview w;
     math::random rng;
     std::thread trd;
-    std::string html = &_binary_src_gui_html_start;
 
     w.bind("AIMove", [&trd, &model, &w](std::string s) -> std::string {
       board::t b = 0;

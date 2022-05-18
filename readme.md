@@ -110,17 +110,19 @@ Available structures:
 Parameters:
 
 ```
-  -a <alpha>    -- Set the learning rate
-                   default: 0.1
-  -l <lambda>   -- Set the trace decay
-                   default: 0.5
-  -e <episodes> -- Set the number of training games * 1000
-                   default: 1
-  -t <threads>  -- Set the number of threads
-                   default: 1 (0 uses all threads)
-  -i            -- Enable reading from a binary file
-  -o            -- Enable writing to a binary file
-  -c            -- Enable temporal coherence learning
+-a <alpha>    -- Set the learning rate
+                 default: 0.1
+-l <lambda>   -- Set the trace decay
+                 default: 0.5
+-e <episodes> -- Set the number of training games * 1000
+                 default: 1
+-t <threads>  -- Set the number of threads
+                 default: 1 (0 uses all threads)
+-i            -- Enable reading from a binary file
+-o            -- Enable writing to a binary file
+-c            -- Enable temporal coherence learning
+-r            -- Enable restart strategy
+-h            -- Show this message
 ```
 
 ### Run agent
@@ -132,15 +134,14 @@ Parameters:
 Parameters:
 
 ```
-  -d <depth>    -- Set the search depth
-                   default: 0
-  -e <episodes> -- Set the number of games to play
-                   default: 1
-  -t <threads>  -- Set the number of threads
-                   default: 1 (0 uses all threads)
-  -g            -- Enable the GUI
-  -h            -- Show this message                        
-  -r            -- Enable restart strategy
+-d <depth>    -- Set the search depth
+                 default: 0
+-e <episodes> -- Set the number of games to play
+                 default: 1
+-t <threads>  -- Set the number of threads
+                 default: 1 (0 uses all threads)
+-g            -- Enable the GUI
+-h            -- Show this message                        
 ```
 
 Example:

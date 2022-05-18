@@ -18,6 +18,6 @@ EXTRAS?=
 OPTS=$(DEFINES) $(OPTIMIZATIONS) $(FEATUERS) $(EXTRAS)
 
 all:
-	objcopy --input binary --output elf64-x86-64 --binary-architecture i386:x86-64 src/gui.html gui.o
+	echo "const char* html = R\"($$(cat src/gui.html))\";" | g++ -xc++ -c -o gui.o -
 	$(CXX) $(OPTS) $(WEBVIEW_DEPS) -o 2048 src/2048.cpp gui.o
 	mkdir -p $(STRUCTURE)

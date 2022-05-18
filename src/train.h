@@ -92,6 +92,11 @@ inline int main(int argc, char* argv[]) {
   }
 
   std::cout << "Number of weights: " << STRUCTURE::weight_len << '\n';
+  std::cout << "α = " << alpha;
+  if (coherence) std::cout << " (TC)\n";
+  else
+    std::cout << '\n';
+  std::cout << "λ = " << lambda << "\n\n";
 
   const auto learn_task = coherence ? 
     [](int games, float alpha, float lambda, bool restart, int trd_id) {
@@ -117,9 +122,10 @@ inline int main(int argc, char* argv[]) {
   for (auto& i : results) result.join(i.get());
 
   result.print();
-  
+
   if (coherence) STRUCTURE::with_coherence::save(FILE_NAME);
-  else STRUCTURE::save(FILE_NAME);
+  else
+    STRUCTURE::save(FILE_NAME);
   return 0;
 }
 

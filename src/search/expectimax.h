@@ -16,7 +16,7 @@ class search {
   float move_node(board::t b, math::u32 depth) {
     auto max = 0.0f;
 
-    for (auto child : move(b))
+    for (const auto& child : move(b))
       if (child.first != b)
         max = std::max(max, child.second + spawn_node(child.first, depth));
 
@@ -51,7 +51,7 @@ class search {
     movement::move_t result = {b, 0};
     auto max = 0.0f;
 
-    for (auto child : move(b)) {
+    for (const auto& child : move(b)) {
       if (child.first != b) {
         auto val = spawn_node(child.first, search_depth) + child.second;
         if (result.first == b || max < val) {
@@ -67,11 +67,11 @@ class search {
   math::u16 suggest_dir(board::t b) {
     auto result = -1;
     auto max = 0.0f;
-    
+
     auto children = move(b);
-    
+
     for (int i = 0; i < 4; i++) {
-      auto child = children[i];
+      const auto& child = children[i];
       if (child.first != b) {
         auto val = spawn_node(child.first, search_depth) + child.second;
         if (result == -1 || max < val) {
@@ -80,7 +80,7 @@ class search {
         }
       }
     }
-    
+
     return result;
   }
 };

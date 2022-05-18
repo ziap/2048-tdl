@@ -32,7 +32,8 @@ class stat {
     std::cout << "max: " << std::setw(8) << max << '\n';
     std::cout << "m/s: " << std::setw(8)
               << math::u32(moves * 1e9 / float(duration.count())) << "    ";
-    std::cout << "elapsed: " << math::u32(float(duration.count()) / 1e9) << "s\n";
+    std::cout << "elapsed: " << math::u32(float(duration.count()) / 1e9)
+              << "s\n";
   }
 
  public:
@@ -78,7 +79,7 @@ class stat {
   }
 
   void join(const stat& other) {
-    start = std::max(start, other.start);
+    start = std::min(start, other.start);
     games += other.games;
     moves += other.moves;
     sum += other.sum;

@@ -70,7 +70,7 @@ class learning {
 
         if (restart && path.size() > 10)
           initboard = board::add_tile(path[path.size() / 2].first, rng);
-        
+
         auto exact = 0.0f;
         auto error = 0.0f;
         for (; path.size(); path.pop_back()) {

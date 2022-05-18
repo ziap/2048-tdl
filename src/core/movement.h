@@ -93,7 +93,7 @@ class movement {
     delete[] right_table;
   }
 
-  std::array<move_t, 4> operator()(board::t b) {
+  inline std::array<move_t, 4> operator()(board::t b) {
     move_t up = {0, 0};
     move_t down = {0, 0};
     move_t left = {0, 0};
