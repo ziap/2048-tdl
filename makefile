@@ -1,8 +1,6 @@
 STRUCTURE?=nw4x6
-ENABLE_TC?=true
-ENABLE_GUI?=true
 CXX?=g++
-STD?=c++17
+ENABLE_GUI?=true
 
 ifeq ($(ENABLE_GUI), true)
 WEBVIEW_DEPS=`pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0`
@@ -10,12 +8,16 @@ else
 WEBVIEW_DEPS=
 endif
 
-FLAGS=-DSTRUCTURE=$(STRUCTURE) -DENABLE_TC=$(ENABLE_TC) -DGUI=$(ENABLE_GUI) -std=$(STD) -DFILE_NAME=\"$(STRUCTURE)/weights.bin\" 
-OPTIM=-O3 -march=native -mtune=native
-FEATS=-mbmi -mbmi2 -mavx -mavx2 -pthread
+DEFINES=-DSTRUCTURE=$(STRUCTURE)\
+	-DFILE_NAME=\"$(STRUCTURE)/weights.bin\"\
+	-DGUI=$(ENABLE_GUI)
+OPTIMIZATIONS=-O3 -march=native -mtune=native
+FEATURES=-mbmi -mbmi2 -mavx -mavx2 -pthread
+EXTRAS?=
 
-OPTIONS=$(FLAGS) $(OPTIM) $(FEATS)
+OPTS=$(DEFINES) $(OPTIMIZATIONS) $(FEATUERS) $(EXTRAS)
+
 all:
-	$(CXX) src/train.cpp -o train $(OPTIONS)
-	$(CXX) src/agent.cpp $(WEBVIEW_DEPS) -o agent $(OPTIONS)
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386:x86-64 src/gui.html gui.o
+	$(CXX) $(OPTS) $(WEBVIEW_DEPS) -o 2048 src/2048.cpp gui.o
 	mkdir -p $(STRUCTURE)

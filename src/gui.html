@@ -1,9 +1,3 @@
-#include <string>
-
-#ifndef GUI_H
-#define GUI_H
-
-const char* html = R"(
 <!DOCTYPE html>
 <html>
 
@@ -1909,7 +1903,7 @@ const char* html = R"(
 
             toggler.addEventListener("click", function() {
                 working = 1 - working;
-                toggler.textContent = ["Stop AI", "Start AI"][working];
+                toggler.textContent = ["Start AI", "Stop AI"][working];
                 if (working) step();
             });
         });
@@ -1917,6 +1911,3 @@ const char* html = R"(
 </body>
 
 </html>
-)";
-
-#endif

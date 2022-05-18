@@ -1,2 +1,2 @@
 CompileFlags:
-    Add: [-Wall, -std=c++17]
+    Add: [-Wall, -std=c++17, -mbmi2]

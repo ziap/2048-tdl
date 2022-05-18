@@ -1,15 +1,11 @@
-# editor config
-.vscode
+# binaries
+2048
+gui.o
 
-# binary and log files
-train
-agent
-history.csv
-
-# model files
-nw5x4/**
-nw4x5/**
-nw6x5/**
-nw4x6/**
-nw5x6/**
+# models
 nw8x6/**
+nw5x6/**
+nw4x6/**
+nw6x5/**
+nw4x5/**
+nw5x4/**
