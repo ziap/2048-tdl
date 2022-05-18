@@ -59,7 +59,7 @@ inline const auto parse(int argc, char *argv[]) {
       default:
         std::cout << "2048 TDL by Zap\n"
                      "Released under the MIT License\n\n"
-                     "Options:\n\n"
+                     "Options:\n"
                      "  -d <depth>    -- Set the search depth\n"
                      "                   default: 0\n"
                      "  -e <episodes> -- Set the number of games to play\n"

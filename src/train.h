@@ -55,7 +55,7 @@ inline const auto parse(int argc, char* argv[]) {
         std::cout
           << "2048 TDL by Zap\n"
              "Released under the MIT License\n\n"
-             "Options:\n\n"
+             "Options:\n"
              "  -a <alpha>    -- Set the learning rate\n"
              "                   default: 0.1\n"
              "  -l <lambda>   -- Set the trace decay\n"
@@ -68,6 +68,7 @@ inline const auto parse(int argc, char* argv[]) {
              "  -o            -- Enable writing to a binary file\n"
              "  -c            -- Enable temporal coherence learning\n"
              "  -r            -- Enable restart strategy\n"
+             "  -h            -- Show this message\n\n"
              "See https://github.com/ziap/2048-tdl for more info\n";
         games = 0;
     }

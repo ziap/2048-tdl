@@ -87,8 +87,8 @@ make [Options]
 Parameters:
 
 - **STRUCTURE**: The tuple network structure. (default: nw4x6)
-- **ENABLE_TC**: Enable temporal coherence learning. (default: true)
 - **ENABLE_GUI**: Enable the GUI. (default: true)
+- **EXTRAS**: Extra compiler options for profiling, etc.
 
 Available structures:
 
@@ -103,39 +103,51 @@ Available structures:
 
 ### Train model
 
-```
-./train [Options]
+```sh
+./2048 train [Options]
 ```
 
 Parameters:
 
-- **-a [Rate]** - The learning rate (default: 1.0)
-- **-l [Lambda]** - The trace decay parameter (default: 0.5)
-- **-e [Episodes]** - Number of training games \* 1000 (default: 1)
-- **-i** - Enable reading from a binary file
-- **-o** - Enable writing to a binary file
-- **-r** - Enable restart strategy
-- **-t [Threads]** - Enable threading (default: 1)
+```
+  -a <alpha>    -- Set the learning rate
+                   default: 0.1
+  -l <lambda>   -- Set the trace decay
+                   default: 0.5
+  -e <episodes> -- Set the number of training games * 1000
+                   default: 1
+  -t <threads>  -- Set the number of threads
+                   default: 1 (0 uses all threads)
+  -i            -- Enable reading from a binary file
+  -o            -- Enable writing to a binary file
+  -c            -- Enable temporal coherence learning
+  -r            -- Enable restart strategy  
+```
 
 ### Run agent
 
 ```sh
-./agent [Options]
+./2048 agent [Options]
 ```
 
 Parameters:
 
-- **-d [Depth]** - The search depth (default: 0)
-- **-e [Iterations]** - Number of games to play (default: 1)
-- **-s** - Show the board when the AI is running **AI speed will be capped down to the text rendering speed of your terminal**
-- **-g** - Enable GUI interface, will show an error message and exit if you build the AI without GUI.
-- **-t** - Enable threading (default: 1)
+```
+  -d <depth>    -- Set the search depth
+                   default: 0
+  -e <episodes> -- Set the number of games to play
+                   default: 1
+  -t <threads>  -- Set the number of threads
+                   default: 1 (0 uses all threads)
+  -g            -- Enable the GUI
+  -h            -- Show this message                                                                                        -r            -- Enable restart strategy
+```
 
 Example:
 
 ```sh
-./agent -d2 -i100 -t # 5 ply, 100 games, multi-threaded
-./agent -d4 -g    # 11 ply, 1 game, enable GUI
+./agent -d2 -i100 -t 0 # 5 ply, 100 games, multi-threaded
+./agent -d4 -g         # 11 ply, enable GUI
 ```
 
 Example game with the GUI:
@@ -144,9 +156,7 @@ Example game with the GUI:
 
 ## Todo
 
-- [ ] Add some handcrafted features
-- [ ] Add multi stage learning
-- [ ] Refactor the code for better thread efficiency
+- [ ] Add multi-stage learning
 - [ ] Add more settings to the GUI application
 
 # License
