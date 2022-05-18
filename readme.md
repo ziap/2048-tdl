@@ -121,7 +121,6 @@ Parameters:
   -i            -- Enable reading from a binary file
   -o            -- Enable writing to a binary file
   -c            -- Enable temporal coherence learning
-  -r            -- Enable restart strategy  
 ```
 
 ### Run agent
