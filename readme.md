@@ -140,7 +140,8 @@ Parameters:
   -t <threads>  -- Set the number of threads
                    default: 1 (0 uses all threads)
   -g            -- Enable the GUI
-  -h            -- Show this message                                                                                        -r            -- Enable restart strategy
+  -h            -- Show this message                        
+  -r            -- Enable restart strategy
 ```
 
 Example:
