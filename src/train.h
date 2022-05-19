@@ -85,7 +85,6 @@ inline int main(int argc, char* argv[]) {
   if (games == 0) return 0;
 
   if (read) {
-    std::cout << FILE_NAME << '\n';
     if (coherence) STRUCTURE::with_coherence::load(FILE_NAME);
     else
       STRUCTURE::load(FILE_NAME);

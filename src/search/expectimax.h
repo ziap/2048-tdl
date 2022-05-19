@@ -64,7 +64,7 @@ class search {
     return result;
   }
 
-  math::u16 suggest_dir(board::t b) {
+  int suggest_dir(board::t b) {
     auto result = -1;
     auto max = 0.0f;
 

@@ -34,7 +34,7 @@
 #define FILE_NAME "nw4x6/weights.bin"
 #endif
 
-extern "C" const char *html;
+extern const char *html;
 
 namespace agent {
 

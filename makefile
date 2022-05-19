@@ -13,10 +13,10 @@ DEFINES=-DSTRUCTURE=$(STRUCTURE)\
 	-DFILE_NAME=\"$(STRUCTURE)/weights.bin\"\
 	-DGUI=$(ENABLE_GUI)
 OPTIMIZATIONS=-O3 -march=native -mtune=native
-FEATURES=-mbmi -mbmi2 -mavx -mavx2 -pthread
+FEATURES=-std=c++17 -mbmi -mbmi2 -mavx -mavx2 -pthread
 EXTRAS?=
 
-OPTS=$(DEFINES) $(OPTIMIZATIONS) $(FEATUERS) $(EXTRAS)
+OPTS=$(DEFINES) $(OPTIMIZATIONS) $(FEATURES) $(EXTRAS)
 
 ifneq ($(filter $(STRUCTURE), $(STRUCTURES)),)
 all:
