@@ -18,6 +18,8 @@ inline u64 pext64(u64 val, u64 mask) {
   return __builtin_ia32_pext_di(val, mask);
 }
 #else
+#warning PEXT64 and PDEP64 is slow without BMI2
+
 inline u64 pdep64(u64 val, u64 mask) {
   u64 res = 0;
   for (u64 bb = 1; mask; bb <<= 1) {

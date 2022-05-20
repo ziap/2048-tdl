@@ -26,5 +26,5 @@ all:
 else
 all:
 	@echo "Structure $(STRUCTURE) does not exists"
-	@echo Available structures: $(foreach struct, $(STRUCTURES), -$(struct))
+	@echo Available structures: $(STRUCTURES)
 endif
