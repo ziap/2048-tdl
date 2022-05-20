@@ -4,46 +4,46 @@ A 2048 agent with N-Tuple Network trained using Backward Temporal Coherence Lear
 
 ## Benchmark (Intel® Core™ i5-8300H Processor)
 
+### Score
+
 1 ply search is the trained model without any tree search algorithm
 
 5 ply is depth 2 expectimax search with the trained model for evaluation function
 
-| Depth | Games | Scores | % 32768 | % 16384 | % 8192 | Moves/s |
-| ----- | ----- | ------ | ------- | ------- | ------ | ------- |
-| 1 ply | 10000 | 254275 | 7.99    | 54.29   | 84.47  | 1405922 |
-| 5 ply | 300   | 420477 | 37.33   | 83.67   | 96.67  | 8246    |
+| Depth | Games | Scores | % 32768 | % 16384 | % 8192 |
+| ----- | ----- | ------ | ------- | ------- | ------ |
+| 1 ply | 10000 | 188596 | 3.48    | 35.35   | 69.61  |
+| 5 ply | 300   | 420480 | 40      | 83      | 94     |
 
 You can achieve similar results with:
 
 ```sh
-# Build the program with the 8x6 tuple network
-make STRUCTURE=nw8x6
+# Build the program with the 4x6 tuple network
+make STRUCTURE=nw4x6
 
-# Train the network with 400000 episodes, α = 1.0, λ = 0.5 and restart strategy
-./train -e 400 -a 1.0 -l 0.5 -o -r
+# Train the network with 1000000 episodes, α = 1.0, λ = 0.5, TC and restart strategy
+./2048 train -e 400 -a 1.0 -l 0.5 -c -o -r
 
 # Run the agent for 10000 games with no search
-./agent -e 10000
+./2048 agent -e 10000
 
 # Run the agent for 300 games with 5 ply search
-./agent -e 300 -d 2
+./2048 agent -e 300 -d 2
 ```
 
-**Note:** Because of overhead, using N cores doesn't make the program N times faster, especially on weaker CPUs like the one in the benchmark.
-So it's generally not recommended to use all the cores available.
-For example on the CPU used in the benchmark (4 cores, 8 threads), the speed of using different number of threads is:
+### Speed
 
-| Depth | Threads | Speedup   |
-| ----- | ------- | --------- |
-| 1 ply | 1       | +0%       |
-| 1 ply | 2       | +16%      |
-| 1 ply | 4       | **+19%**  |
-| 1 ply | 8       | +10%      |
-| - - - | - - -   | - - -     |
-| 5 ply | 1       | +0%       |
-| 5 ply | 2       | +69%      |
-| 5 ply | 4       | **+187%** |
-| 5 ply | 8       | +156%     |
+| Depth | Threads | Speed (moves/s) |
+| ----- | ------- | --------------- |
+| 1 ply | 1       | 2869076         |
+| 1 ply | 2       | 5270509 (1.84x) |
+| 1 ply | 4       | 8078964 (2.82x) |
+| 1 ply | 8       | 9396165 (3.27x) |
+| - - - | - - -   | - - -           |
+| 5 ply | 1       | 14783           |
+| 5 ply | 2       | 27148 (1.84x)   |
+| 5 ply | 4       | 44129 (2.99x)   |
+| 5 ply | 8       | 44330 (3.00x)   |
 
 ## Features
 
@@ -69,14 +69,12 @@ Download and unzip the trained model (8x6tuple network) [here](../../releases/la
 ### Build
 
 GCC and GNU Make are required to build the program.
-To build the GUI, you also need the GTK+ development libraries and webkit2gtk-4.0.
-
 Currently, the makefile only supports Linux. Building the program on other platforms should be possible, but not tested.
 Cross platform build script is planned.
 
-Building the program on Google Colaboratory is also supported if you disable the GUI.
+To build the GUI, you need to install the GTK+ development libraries and webkit2gtk-4.0 and enable the submodule.
 
-Make sure to clone the repository recursively or initalize the submodules. (only required if you are using the GUI)
+Building the program on Google Colaboratory is also supported if you disable the GUI.
 
 #### Build steps
 
