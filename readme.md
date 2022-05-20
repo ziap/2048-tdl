@@ -22,7 +22,7 @@ You can achieve similar results with:
 make STRUCTURE=nw4x6
 
 # Train the network with 1000000 episodes, α = 1.0, λ = 0.5, TC and restart strategy
-./2048 train -e 400 -a 1.0 -l 0.5 -c -o -r
+./2048 train -e 1000 -a 1.0 -l 0.5 -c -o -r
 
 # Run the agent for 10000 games with no search
 ./2048 agent -e 10000
