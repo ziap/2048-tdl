@@ -24,6 +24,7 @@
 
 #if GUI
 #include "webview/webview.h"
+extern const char *html;
 #endif
 
 #ifndef STRUCTURE
@@ -33,8 +34,6 @@
 #ifndef FILE_NAME
 #define FILE_NAME "nw4x6/weights.bin"
 #endif
-
-extern const char *html;
 
 namespace agent {
 

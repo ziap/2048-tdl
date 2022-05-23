@@ -5,8 +5,10 @@ STRUCTURES=nw5x4 nw4x5 nw6x5 nw4x6 nw5x6 nw8x6
 
 ifeq ($(ENABLE_GUI), true)
 WEBVIEW_DEPS=`pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0`
+GUI_OBJ=gui.o
 else
 WEBVIEW_DEPS=
+GUI_OBJ=
 endif
 
 DEFINES=-DSTRUCTURE=$(STRUCTURE)\
@@ -21,7 +23,7 @@ OPTS=$(DEFINES) $(OPTIMIZATIONS) $(FEATURES) $(EXTRAS)
 ifneq ($(filter $(STRUCTURE), $(STRUCTURES)),)
 all:
 	echo "const char* html = R\"($$(cat src/gui.html))\";" | g++ -xc++ -c -o gui.o -
-	$(CXX) $(OPTS) $(WEBVIEW_DEPS) -o 2048 src/2048.cpp gui.o
+	$(CXX) $(OPTS) $(WEBVIEW_DEPS) -o 2048 src/2048.cpp $(GUI_OBJ)
 	mkdir -p $(STRUCTURE)
 else
 all:
