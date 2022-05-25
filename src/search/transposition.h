@@ -37,10 +37,10 @@ class transposition {
   }
 
   ~transposition() { delete[] entries; }
-  
-  transposition(const transposition&) = delete;
-  transposition& operator=(const transposition&) = delete;
-  
+
+  transposition(const transposition &) = delete;
+  transposition &operator=(const transposition &) = delete;
+
   bool lookup(board::t board, math::u32 depth, float *score) {
     entry_t entry = entries[hash(board)];
     if (entry.board == board && entry.depth >= depth) {

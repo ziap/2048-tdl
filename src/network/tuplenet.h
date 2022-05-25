@@ -70,7 +70,8 @@ class network {
       fin.open((path + ".tc").c_str(), std::ios::out | std::ios::binary);
       if (fin.is_open())
         fin.read(
-          (char *)(weights + weight_len), sizeof(float) * weight_len * 2);
+          (char *)(weights + weight_len), sizeof(float) * weight_len * 2
+        );
       fin.close();
     }
   }
@@ -83,7 +84,8 @@ class network {
     if constexpr (tc) {
       fout.open((path + ".tc").c_str(), std::ios::out | std::ios::binary);
       fout.write(
-        (char *)(weights + weight_len), sizeof(float) * weight_len * 2);
+        (char *)(weights + weight_len), sizeof(float) * weight_len * 2
+      );
       fout.close();
     }
   }

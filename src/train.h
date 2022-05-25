@@ -114,7 +114,8 @@ inline int main(int argc, char* argv[]) {
   for (auto i = 1; i < thread_count; i++)
     results.push_back(std::async(
       std::launch::async, learn_task, games_per_thread, alpha, lambda, restart,
-      i));
+      i
+    ));
 
   auto result = learn_task(remaining_games, alpha, lambda, restart, 0);
 

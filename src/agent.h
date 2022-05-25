@@ -100,7 +100,8 @@ inline int main(int argc, char *argv[]) {
           if (dir != -1)
             w.eval(std::string("move(") + std::to_string(dir) + ")");
         },
-        b);
+        b
+      );
 
       return "";
     });
@@ -118,42 +119,42 @@ inline int main(int argc, char *argv[]) {
 #endif
   }
 
-  const auto play_game = [](
-                           math::u32 games, math::u32 depth, math::u32 trd_id) {
-    const auto interval = games > 100 ? games / 100 : 1;
-    const auto digits = std::to_string(games).length();
+  const auto play_game =
+    [](math::u32 games, math::u32 depth, math::u32 trd_id) {
+      const auto interval = games > 100 ? games / 100 : 1;
+      const auto digits = std::to_string(games).length();
 
-    math::random rng;
-    stat result;
+      math::random rng;
+      stat result;
 
-    search<STRUCTURE> model(depth);
+      search<STRUCTURE> model(depth);
 
-    for (auto i = 1u; i <= games; i++) {
-      auto move_cnt = 0;
-      auto score = 0.0f;
-      auto b = board::add_tile(board::add_tile(0, rng), rng);
+      for (auto i = 1u; i <= games; i++) {
+        auto move_cnt = 0;
+        auto score = 0.0f;
+        auto b = board::add_tile(board::add_tile(0, rng), rng);
 
-      for (;;) {
-        auto next = model.suggest_move(b);
-        if (next.first != b) {
-          b = board::add_tile(next.first, rng);
-          score += next.second;
-          move_cnt++;
-        } else
-          break;
+        for (;;) {
+          auto next = model.suggest_move(b);
+          if (next.first != b) {
+            b = board::add_tile(next.first, rng);
+            score += next.second;
+            move_cnt++;
+          } else
+            break;
+        }
+
+        result.add(b, score, move_cnt);
+
+        if (i % interval == 0) {
+          std::cout << "progress: " << std::setw(digits) << i << '/' << games
+                    << "    thread: #" << trd_id << '\n';
+          result.summary();
+        }
       }
 
-      result.add(b, score, move_cnt);
-
-      if (i % interval == 0) {
-        std::cout << "progress: " << std::setw(digits) << i << '/' << games
-                  << "    thread: #" << trd_id << '\n';
-        result.summary();
-      }
-    }
-
-    return result;
-  };
+      return result;
+    };
 
   const auto games_per_thread = ceil(float(games) / float(thread_count));
   const auto remaining_games = games - games_per_thread * (thread_count - 1);
@@ -162,7 +163,8 @@ inline int main(int argc, char *argv[]) {
 
   for (auto i = 1; i < thread_count; i++)
     results.push_back(
-      std::async(std::launch::async, play_game, games_per_thread, depth, i));
+      std::async(std::launch::async, play_game, games_per_thread, depth, i)
+    );
 
   auto result = play_game(remaining_games, depth, 0);
 
