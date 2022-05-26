@@ -26,7 +26,7 @@ class search {
   float spawn_node(board::t b, math::u32 depth) {
     auto expect = 0.0f;
     if (depth == 0) return Model::estimate(b);
-    if (cache.lookup(b, depth, &expect)) return expect;
+    if (cache.lookup(b, depth, expect)) return expect;
 
     expect = 0.0f;
     auto mask = board::empty_pos(b);
