@@ -33,7 +33,7 @@ class search {
     auto empty = float((mask * 0x1111111111111111ull) >> 60);
 
     while (mask) {
-      auto tile = mask & (~mask + 1);
+      auto tile = mask & -mask;
       expect += move_node(b | tile, depth - 1) * 0.9;
       expect += move_node(b | (tile << 1), depth - 1) * 0.1;
       mask ^= tile;

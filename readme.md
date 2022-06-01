@@ -8,12 +8,12 @@ A 2048 agent with N-Tuple Network trained using Backward Temporal Coherence Lear
 
 1 ply search is the trained model without any tree search algorithm
 
-5 ply is depth 2 expectimax search with the trained model for evaluation function
+3 ply is depth 2 expectimax search with the trained model for evaluation function
 
 | Depth | Games | Scores | % 32768 | % 16384 | % 8192 |
 | ----- | ----- | ------ | ------- | ------- | ------ |
 | 1 ply | 10000 | 188596 | 3.48    | 35.35   | 69.61  |
-| 5 ply | 300   | 420480 | 40      | 83      | 94     |
+| 3 ply | 300   | 420480 | 40      | 83      | 94     |
 
 You can achieve similar results with:
 
@@ -27,23 +27,19 @@ make STRUCTURE=nw4x6
 # Run the agent for 10000 games with no search
 ./2048 agent -e 10000
 
-# Run the agent for 300 games with 5 ply search
+# Run the agent for 300 games with 3 ply search
 ./2048 agent -e 300 -d 2
 ```
 
-### Speed
+### Tuple networks
 
-| Depth | Threads | Speed (moves/s) |
-| ----- | ------- | --------------- |
-| 1 ply | 1       | 2869076         |
-| 1 ply | 2       | 5270509 (1.84x) |
-| 1 ply | 4       | 8078964 (2.82x) |
-| 1 ply | 8       | 9396165 (3.27x) |
-| - - - | - - -   | - - -           |
-| 5 ply | 1       | 14783           |
-| 5 ply | 2       | 27148 (1.84x)   |
-| 5 ply | 4       | 44129 (2.99x)   |
-| 5 ply | 8       | 44330 (3.00x)   |
+| Structure | Size   | Max tile | Speed (1 thread) | Speed (8 threads) | Speed (3 ply, 8 threads) |
+| --------- | ------ | -------- | ---------------- | ----------------- | ------------------------ |
+| nw5x4     | 1.25MB |  8192    | 5901430 moves/s  | 20643753 moves/s  | 40542 moves/s            |
+| nw4x5     | 16MB   | 16384    | 5560291 moves/s  | 18563599 moves/s  | 50428 moves/s            |
+| nw6x5     | 24MB   | 16384    | 3905823 moves/s  | 12509119 moves/s  | 37908 moves/s            |
+| nw4x6     | 256MB  | 32768    | 2553369 moves/s  |  8381214 moves/s  | 40051 moves/s            |
+| nw8x6     | 512MB  | 32768    | 1525958 moves/s  |  4279976 moves/s  | 19764 moves/s            |
 
 ## Features
 
@@ -88,16 +84,7 @@ Parameters:
 - **ENABLE_GUI**: Enable the GUI. (default: true)
 - **EXTRAS**: Extra compiler options for profiling, etc.
 
-Available structures:
-
-| Structure | Size    | Speed          |
-| --------- | ------- | -------------- |
-| nw5x4     | 1.25 MB | 5.1E+6 moves/s |
-| nw4x5     | 16 MB   | 4.3E+6 moves/s |
-| nw6x5     | 24 MB   | 3.2E+6 moves/s |
-| nw4x6     | 256 MB  | 2.3E+6 moves/s |
-| nw5x6     | 320 MB  | 1.8E+6 moves/s |
-| nw8x6     | 512 MB  | 1.4E+6 moves/s |
+Available structures: (See [benchmark](#tuple-networks))
 
 ### Train model
 
@@ -145,8 +132,8 @@ Parameters:
 Example:
 
 ```sh
-./agent -d2 -i100 -t 0 # 5 ply, 100 games, multi-threaded
-./agent -d4 -g         # 11 ply, enable GUI
+./agent -d2 -i100 -t 0 # 3 ply, 100 games, multi-threaded
+./agent -d4 -g         # 5 ply, enable GUI
 ```
 
 Example game with the GUI:

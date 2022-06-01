@@ -95,6 +95,8 @@ class movement {
 
   movement(const movement &) = delete;
   movement &operator=(const movement &) = delete;
+  movement(const movement &&) = delete;
+  movement &operator=(const movement &&) = delete;
 
   inline std::array<move_t, 4> operator()(board::t b) {
     move_t up = {0, 0};

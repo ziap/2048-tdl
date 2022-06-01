@@ -12,8 +12,8 @@ using t = unsigned long long;
 
 inline void print(t b) {
   std::cout << "+-------+-------+-------+-------+\n";
-  for (int i = 60; i >= 0; i -= 4) {
-    math::u64 tile = (1 << math::pext64(b, 0xfull << i)) & -2;
+  for (auto i = 60; i >= 0; i -= 4) {
+    auto tile = (1u << math::pext64(b, 0xfull << i)) & -2;
     if (tile) std::cout << '|' << std::setw(6) << tile << ' ';
     else
       std::cout << "|       ";
@@ -28,12 +28,12 @@ inline t empty_pos(t b) {
 }
 
 inline t add_tile(t b, math::random &rng) {
-  size_t num_empty = 0;
+  auto num_empty = 0u;
   t tiles[16] = {0};
   t mask = empty_pos(b);
 
   while (mask) {
-    t tile = mask & (~mask + 1);
+    auto tile = mask & -mask;
     tiles[num_empty++] = tile;
     mask ^= tile;
   }
@@ -42,7 +42,7 @@ inline t add_tile(t b, math::random &rng) {
 }
 
 inline math::u32 max_tile(t b) {
-  math::u32 max = 0;
+  auto max = 0u;
   for (; b; b >>= 4) max = std::max(max, math::u32(b & 0xf));
   return max;
 }
