@@ -10,10 +10,10 @@ A 2048 agent with N-Tuple Network trained using Backward Temporal Coherence Lear
 
 3 ply is depth 2 expectimax search with the trained model for evaluation function
 
-| Depth | Games | Scores | % 32768 | % 16384 | % 8192 |
-| ----- | ----- | ------ | ------- | ------- | ------ |
-| 1 ply | 10000 | 188596 | 3.48    | 35.35   | 69.61  |
-| 3 ply | 300   | 420480 | 40      | 83      | 94     |
+| Depth | Games  | Score  | % 32768 | % 16384 | % 8192 |
+| ----- | ------ | ------ | ------- | ------- | ------ |
+| 1 ply | 100000 | 201381 | 3.62    | 37.14   | 73.86  |
+| 3 ply | 1000   | 419479 | 35.7    | 80.2    | 95.5   |
 
 You can achieve similar results with:
 
