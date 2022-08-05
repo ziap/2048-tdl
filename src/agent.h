@@ -87,10 +87,10 @@ inline int main(int argc, char *argv[]) {
     math::random rng;
     std::thread trd;
 
-    w.bind("AIMove", [&trd, &model, &w](std::string s) -> std::string {
+    w.bind("AIMove", [&trd, &model, &w](std::string s) {
       board::t b = 0;
       for (int i = 0; i < 4; i++)
-        b = ((b << 16) | std::stoull(webview::json_parse(s, "", i)));
+        b = ((b << 16) | std::stoull(webview::detail::json_parse(s, "", i)));
       if (trd.joinable()) trd.join();
 
       trd = std::thread(
