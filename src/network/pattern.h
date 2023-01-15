@@ -12,7 +12,7 @@ struct extract_pattern {
   template <math::u16... pattern>
   static constexpr bool ordered() {
     auto last = -1;
-    for (int i : {pattern...}) {
+    for (auto i : {pattern...}) {
       if (i <= last) return false;
       last = i;
     }
@@ -55,7 +55,7 @@ struct extract_pattern {
     }
 
     static float update(board::t b, float* w, float u, math::u64 l) {
-      float value = 0;
+      auto value = 0.0f;
       for (auto i = 0; i < 8; i++) {
         auto ind = index(b);
         auto alpha = 1.0f;

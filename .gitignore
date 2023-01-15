@@ -2,6 +2,9 @@
 2048
 gui.o
 
+# vendor
+src/webview.h
+
 # models
 nw8x6/**
 nw5x6/**

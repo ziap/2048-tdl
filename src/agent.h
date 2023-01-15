@@ -23,7 +23,7 @@
 #endif
 
 #if GUI
-#include "webview/webview.h"
+#include "webview.h"
 extern const char *html;
 #endif
 

@@ -21,7 +21,7 @@ EXTRAS?=
 OPTS=$(DEFINES) $(OPTIMIZATIONS) $(FEATURES) $(EXTRAS)
 
 ifneq ($(filter $(STRUCTURE), $(STRUCTURES)),)
-all: $(STRUCTURE) $(GUI_OBJ)
+all: $(STRUCTURE) $(GUI_OBJ) src/webview.h
 	$(CXX) $(OPTS) $(WEBVIEW_DEPS) -o 2048 src/2048.cpp $(GUI_OBJ)
 else
 all:
@@ -34,6 +34,9 @@ $(STRUCTURE):
 
 $(GUI_OBJ):
 	echo "const char* html = R\"($$(cat src/gui.html))\";" | g++ -xc++ -c -o $(GUI_OBJ) -
+
+src/webview.h:
+	curl https://raw.githubusercontent.com/webview/webview/master/webview.h -o src/webview.h
 
 clean:
 	rm -f 2048 gui.o
