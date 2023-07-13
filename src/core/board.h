@@ -8,7 +8,7 @@
 
 namespace board {
 
-using t = unsigned long long;
+using t = u64;
 
 inline void print(t b) {
   std::cout << "+-------+-------+-------+-------+\n";
@@ -28,27 +28,23 @@ constexpr t empty_pos(t b) {
 }
 
 inline t add_tile(t b, math::random &rng) {
-  auto num_empty = 0u;
-  t tiles[16] = {0};
-  t mask = empty_pos(b);
+  auto mask = empty_pos(b);
+  auto empty = math::popcnt(mask);
+  auto idx = rng() % empty;
+  for (auto i = 0; i < idx; i++) mask &= mask - 1;
+  auto tile = mask & -mask;
 
-  while (mask) {
-    auto tile = mask & -mask;
-    tiles[num_empty++] = tile;
-    mask ^= tile;
-  }
-
-  return b | ((tiles[rng() % num_empty]) << (rng() % 10 == 0));
+  return b | (tile << (rng() % 10 == 0));
 }
 
-constexpr math::u32 max_tile(t b) {
+constexpr u32 max_tile(t b) {
   auto max = 0u;
-  for (; b; b >>= 4) max = std::max(max, math::u32(b & 0xf));
+  for (; b; b >>= 4) max = std::max(max, u32(b & 0xf));
   return max;
 }
 
-constexpr math::u16 reverse_row(math::u16 row) {
-  return math::u16(
+constexpr u16 reverse_row(u16 row) {
+  return u16(
     (row >> 12) | ((row >> 4) & 0x00f0) | ((row << 4) & 0x0f00) | (row << 12)
   );
 }

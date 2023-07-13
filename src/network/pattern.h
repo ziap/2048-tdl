@@ -7,9 +7,9 @@
 #include "../core/board.h"
 #include "../core/math.h"
 
-template <bool tc, math::u64 n>
+template <bool tc, u64 n>
 struct extract_pattern {
-  template <math::u16... pattern>
+  template <u16... pattern>
   static constexpr bool ordered() {
     auto last = -1;
     for (auto i : {pattern...}) {
@@ -19,22 +19,22 @@ struct extract_pattern {
     return true;
   }
 
-  template <math::u16... pattern>
+  template <u16... pattern>
   struct indexer;
 
-  template <math::u16 T>
+  template <u16 T>
   struct indexer<T> {
     static constexpr board::t mask = 0xfull << (4 * (15 - T));
   };
 
-  template <math::u16 T, math::u16... Ts>
+  template <u16 T, u16... Ts>
   struct indexer<T, Ts...> {
     static constexpr board::t mask = indexer<T>::mask | indexer<Ts...>::mask;
   };
 
-  template <math::u16... pattern>
+  template <u16... pattern>
   struct tuple {
-    static constexpr math::u16 length = sizeof...(pattern);
+    static constexpr u16 length = sizeof...(pattern);
 
    private:
     static constexpr board::t index(board::t b) {
@@ -54,7 +54,7 @@ struct extract_pattern {
       return value;
     }
 
-    static float update(board::t b, float* w, float u, math::u64 l) {
+    static float update(board::t b, float* w, float u, u64 l) {
       auto value = 0.0f;
       for (auto i = 0; i < 8; i++) {
         auto ind = index(b);
@@ -77,10 +77,10 @@ struct extract_pattern {
     }
   };
 
-  template <math::u64 x, math::u16... xs>
+  template <u64 x, u16... xs>
   struct extractor : extractor<(x >> 4), xs..., (x & 0xf)> {};
 
-  template <math::u16... xs>
+  template <u16... xs>
   struct extractor<0, xs...> {
     using value = typename std::enable_if<ordered<xs...>(), tuple<xs...>>::type;
   };

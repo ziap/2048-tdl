@@ -13,24 +13,27 @@ class search {
   transposition<0x40000> cache;
   movement move;
 
-  float move_node(board::t b, math::u32 depth) {
+  float move_node(board::t b, u32 depth) {
     auto max = 0.0f;
 
-    for (const auto& child : move(b))
-      if (child.first != b)
-        max = std::max(max, child.second + spawn_node(child.first, depth));
+    movement::move_t moves[4];
+    move(b, moves);
+
+    for (const auto &child : moves)
+      if (child.board != b)
+        max = std::max(max, child.reward + spawn_node(child.board, depth));
 
     return max;
   }
 
-  float spawn_node(board::t b, math::u32 depth) {
+  float spawn_node(board::t b, u32 depth) {
     auto expect = 0.0f;
     if (depth == 0) return Model::estimate(b);
     if (cache.lookup(b, depth, expect)) return expect;
 
     expect = 0.0f;
     auto mask = board::empty_pos(b);
-    auto empty = float((mask * 0x1111111111111111ull) >> 60);
+    const auto empty = math::popcnt(mask);
 
     while (mask) {
       auto tile = mask & -mask;
@@ -43,18 +46,21 @@ class search {
   }
 
  public:
-  math::u32 search_depth = 0;
+  u32 search_depth = 0;
 
-  search(math::u32 d) : search_depth(d) {}
+  search(u32 d) : search_depth(d) {}
 
   movement::move_t suggest_move(board::t b) {
-    movement::move_t result = {b, 0};
+    movement::move_t result = { b, 0 };
     auto max = 0.0f;
 
-    for (const auto& child : move(b)) {
-      if (child.first != b) {
-        auto val = spawn_node(child.first, search_depth) + child.second;
-        if (result.first == b || max < val) {
+    movement::move_t moves[4];
+    move(b, moves);
+
+    for (const auto& child : moves) {
+      if (child.board != b) {
+        const auto val = spawn_node(child.board, search_depth) + child.reward;
+        if (result.board == b || max < val) {
           max = val;
           result = child;
         }
@@ -67,13 +73,13 @@ class search {
   int suggest_dir(board::t b) {
     auto result = -1;
     auto max = 0.0f;
+    
+    movement::move_t moves[4];
+    move(b, moves);
 
-    auto children = move(b);
-
-    for (int i = 0; i < 4; i++) {
-      const auto& child = children[i];
-      if (child.first != b) {
-        auto val = spawn_node(child.first, search_depth) + child.second;
+    for (auto i = 0; i < 4; ++i) {
+      if (moves[i].board != b) {
+        auto val = spawn_node(moves[i].board, search_depth) + moves[i].reward;
         if (result == -1 || max < val) {
           max = val;
           result = i;

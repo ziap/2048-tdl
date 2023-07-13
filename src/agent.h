@@ -120,7 +120,7 @@ inline int main(int argc, char *argv[]) {
   }
 
   const auto play_game =
-    [](math::u32 games, math::u32 depth, math::u32 trd_id) {
+    [](u32 games, u32 depth, u32 trd_id) {
       const auto interval = games > 100 ? games / 100 : 1;
       const auto digits = std::to_string(games).length();
 
@@ -136,9 +136,9 @@ inline int main(int argc, char *argv[]) {
 
         for (;;) {
           auto next = model.suggest_move(b);
-          if (next.first != b) {
-            b = board::add_tile(next.first, rng);
-            score += next.second;
+          if (next.board != b) {
+            b = board::add_tile(next.board, rng);
+            score += next.reward;
             move_cnt++;
           } else
             break;
@@ -159,18 +159,31 @@ inline int main(int argc, char *argv[]) {
   const auto games_per_thread = ceil(float(games) / float(thread_count));
   const auto remaining_games = games - games_per_thread * (thread_count - 1);
 
-  std::vector<std::future<stat>> results;
+  auto results = new std::future<stat>[thread_count - 1];
 
-  for (auto i = 1; i < thread_count; i++)
-    results.push_back(
-      std::async(std::launch::async, play_game, games_per_thread, depth, i)
-    );
+  for (auto i = 1; i < thread_count; i++) {
+    results[i - 1] = std::async(std::launch::async, play_game, games_per_thread, depth, i);
+  }
 
-  auto result = play_game(remaining_games, depth, 0);
+  if (remaining_games > 0) {
+    auto result = play_game(remaining_games, depth, 0);
 
-  for (auto &i : results) result.join(i.get());
+    for (auto i = 1; i < thread_count; i++) {
+      result.join(results[i - 1].get());
+    }
 
-  result.print();
+    result.print();
+  } else {
+    auto result = results[0].get();
+    
+    for (auto i = 2; i < thread_count; i++) {
+      result.join(results[i - 1].get());
+
+    }
+    result.print();
+  }
+
+  delete[] results;
   return 0;
 }
 

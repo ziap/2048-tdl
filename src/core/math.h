@@ -3,11 +3,13 @@
 
 #include <chrono>
 #include <random>
+#include <cstdint>
+
+using u64 = uint64_t;
+using u32 = uint32_t;
+using u16 = uint16_t;
 
 namespace math {
-using u64 = unsigned long long;
-using u32 = unsigned;
-using u16 = unsigned short;
 
 #if defined(__x86_64__) && defined(__BMI2__)
 inline u64 pdep64(u64 val, u64 mask) {
@@ -39,6 +41,10 @@ inline u64 pext64(u64 val, u64 mask) {
 }
 #endif
 
+inline u64 popcnt(u64 x) {
+  return __builtin_popcountll(x);
+}
+
 inline u32 generate_seed() {
   u64 time =
     std::chrono::high_resolution_clock::now().time_since_epoch().count();
@@ -52,12 +58,12 @@ inline u32 generate_seed() {
 }
 
 class random {
-  std::mt19937_64 engine;
+  std::mt19937 engine;
 
  public:
   random(u32 seed = generate_seed()) { engine.seed(seed); }
 
-  u64 operator()() { return engine(); }
+  u32 operator()() { return engine(); }
 };
 
 };  // namespace math

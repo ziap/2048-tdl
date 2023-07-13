@@ -19,20 +19,20 @@ class stat {
 
   float games = 0;
   float moves = 0;
-  math::u32 max = 0;
+  u32 max = 0;
   float sum = 0;
 
-  math::u32 rates[16] = {0};
+  u32 rates[16] = {0};
 
   void header() {
     auto end = clock::now();
     auto duration = std::chrono::duration_cast<ns>(end - start);
     std::cout << std::fixed << std::setprecision(2);
-    std::cout << "avg: " << std::setw(8) << math::u32(sum / games) << "    ";
+    std::cout << "avg: " << std::setw(8) << u32(sum / games) << "    ";
     std::cout << "max: " << std::setw(8) << max << '\n';
     std::cout << "m/s: " << std::setw(8)
-              << math::u32(moves * 1e9 / float(duration.count())) << "    ";
-    std::cout << "elapsed: " << math::u32(float(duration.count()) / 1e9)
+              << u32(moves * 1e9 / float(duration.count())) << "    ";
+    std::cout << "elapsed: " << u32(float(duration.count()) / 1e9)
               << "s\n";
   }
 

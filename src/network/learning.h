@@ -18,19 +18,23 @@ class learning {
   float lambda;
   bool restart;
   movement move;
+  std::vector<movement::move_t> path;
 
  public:
   learning(float a, float l, bool r)
     : alpha(a / (8 * model::length)), lambda(l), restart(r){};
 
   movement::move_t suggest_move(board::t b) {
-    movement::move_t result = {b, 0};
+    movement::move_t result = { b, 0 };
     auto max = 0.0f;
 
-    for (auto child : move(b)) {
-      if (child.first != b) {
-        auto val = model::estimate(child.first) + child.second;
-        if (result.first == b || max < val) {
+    movement::move_t moves[4];
+    move(b, moves);
+
+    for (const auto &child : moves) {
+      if (child.board != b) {
+        auto val = model::estimate(child.board) + child.reward;
+        if (result.board == b || max < val) {
           max = val;
           result = child;
         }
@@ -40,7 +44,7 @@ class learning {
     return result;
   }
 
-  stat learn_episodes(math::u32 n, unsigned trd_id) {
+  stat learn_episodes(u32 n, unsigned trd_id) {
     auto digits = std::to_string(n).length();
 
     stat result;
@@ -54,30 +58,30 @@ class learning {
       while (initboard) {
         auto b = initboard;
         initboard = 0;
-        std::vector<movement::move_t> path;
+        path.clear();
         auto score = 0;
 
         for (;;) {
           auto best = suggest_move(b);
-          if (best.first != b) {
+          if (best.board != b) {
             path.push_back(best);
-            score += best.second;
-            b = board::add_tile(best.first, rng);
+            score += best.reward;
+            b = board::add_tile(best.board, rng);
             moves++;
           } else
             break;
         }
 
         if (restart && path.size() > 10)
-          initboard = board::add_tile(path[path.size() / 2].first, rng);
+          initboard = board::add_tile(path[path.size() / 2].board, rng);
 
         auto exact = 0.0f;
         auto error = 0.0f;
         for (; path.size(); path.pop_back()) {
           auto action = path.back();
-          error = exact - model::estimate(action.first);
-          exact = action.second + lambda * exact +
-                  (1 - lambda) * model::update(action.first, alpha * error);
+          error = exact - model::estimate(action.board);
+          exact = action.reward + lambda * exact +
+                  (1 - lambda) * model::update(action.board, alpha * error);
         }
 
         if (update_stat) {

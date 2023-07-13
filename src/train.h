@@ -109,17 +109,20 @@ inline int main(int argc, char* argv[]) {
   const auto games_per_thread = ceil(float(games) / float(thread_count));
   const auto remaining_games = games - games_per_thread * (thread_count - 1);
 
-  std::vector<std::future<stat>> results;
+  auto results = new std::future<stat>[thread_count - 1];
 
-  for (auto i = 1; i < thread_count; i++)
-    results.push_back(std::async(
+  for (auto i = 1; i < thread_count; i++) {
+    results[i - 1] = std::async(
       std::launch::async, learn_task, games_per_thread, alpha, lambda, restart,
       i
-    ));
+    );
+  }
 
   auto result = learn_task(remaining_games, alpha, lambda, restart, 0);
 
-  for (auto& i : results) result.join(i.get());
+  for (auto i = 1; i < thread_count; i++) {
+    result.join(results[i - 1].get());
+  }
 
   result.print();
 

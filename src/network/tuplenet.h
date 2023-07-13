@@ -12,7 +12,7 @@ class network {
 
   template <class T>
   struct tuples<T> {
-    static constexpr math::u64 number_of_weights = 1 << (4 * T::length);
+    static constexpr u64 number_of_weights = 1 << (4 * T::length);
 
     static float estimate(board::t b, float *w) { return T::estimate(b, w); }
 
@@ -23,7 +23,7 @@ class network {
 
   template <class T, class... Targs>
   struct tuples<T, Targs...> {
-    static constexpr math::u64 number_of_weights =
+    static constexpr u64 number_of_weights =
       tuples<T>::number_of_weights + tuples<Targs...>::number_of_weights;
 
     static float estimate(board::t b, float *w) {
@@ -38,9 +38,9 @@ class network {
   };
 
  public:
-  static constexpr math::u32 length = sizeof...(Features);
+  static constexpr u32 length = sizeof...(Features);
 
-  static constexpr math::u64 weight_len =
+  static constexpr u64 weight_len =
     tuples<Features...>::number_of_weights;
 
   static float *get_weights() {
@@ -91,7 +91,7 @@ class network {
   }
 };
 
-template <math::u64... pattern>
+template <u64... pattern>
 struct tuple_network
   : public network<false, typename extract_pattern<false, pattern>::value...> {
   using with_coherence =
